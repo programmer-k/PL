@@ -258,10 +258,13 @@
 
             s = "";
             //s += "Average food time: " + Format.mstos(RuleAnalyzer.foodtime(r)) + "\n";
-            s += "Average go to bed: " + Format.mstos(RuleAnalyzer.sleep.gotobed(r)) + "\n";
             s += "Average sleep time per day: " + Format.mstos(Test.i(RuleAnalyzer.sleep.sleeptime(r, timeranges) * 86400000)) + "\n";
-            s += "Average sleep duration: " + Format.mstos(Test.i(RuleAnalyzer.sleep.sleepduration(r))) + "\n";
-            s += "Average sleeps per day: " + RuleAnalyzer.sleep.sleepsperday(r, timeranges) * 86400000;
+            s += "잠드는 평균 시각: " + Format.mstos(RuleAnalyzer.sleep.gotobed(r)) + "\n";
+            s += "일어나는 평균 시각: " + Format.mstos(RuleAnalyzer.sleep.wakeup(r)) + "\n";
+            s += "평균 수면 지속 시간: " + Format.mstos(Test.i(RuleAnalyzer.sleep.sleepduration(r))) + "\n";
+            s += "수면 중 깬 횟수: " + RuleAnalyzer.sleep.sleepsperday(r, timeranges) * 86400000;
+            s += "일주일 중 아침 먹은 평균 횟수: ";
+            s += "일주일 중 아침 먹은 평균 횟수: ";
 
             document.getElementById("rinfo").innerText = s;
         }

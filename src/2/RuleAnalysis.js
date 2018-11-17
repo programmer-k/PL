@@ -95,8 +95,8 @@ var GraphFunctions = (function () {
         var ret = [oneday(S[0])];
         for (var i = 1; i < S.length; i++) {
             var t = oneday(S[i]);
-            if (t != t)
-                alert(S[i]);
+            //if (t != t)
+                //alert(S[i]);
             var p = ret[ret.length - 1];
             if (TimeRange.intersect(p, t))
                 ret[ret.length - 1] = TimeRange.union(p, t);
@@ -153,7 +153,7 @@ var RuleAnalyzer = {
             return NaN;
         },
         sleepduration: function (g) {
-            return ((a) => id(true, alert(a.map((x) => x.from.toString() + "~" + x.to.toString()).join("\n"))) && a.reduce((p, v) => p + v.length(), 0) / a.length)(SearchGraph.timeRanges(g, () => true, (n) => n.value == "sleep"));
+            return ((a) => /*id(true, (a.map((x) => x.from.toString() + "~" + x.to.toString()).join("\n"))) &&*/ a.reduce((p, v) => p + v.length(), 0) / a.length)(SearchGraph.timeRanges(g, () => true, (n) => n.value == "sleep"));
         },
         sleepsperday: function (g, timeranges) {//issue: 연속된 수면 합치기
             return SearchGraph.timeRanges(g, () => true, (n) => n.value == "sleep").length / TimeRange.sumlength(timeranges);
