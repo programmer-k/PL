@@ -318,19 +318,19 @@
 
         // 체크 박스 클릭하면 그에 따른 출력을 해주는 함수.
         function clic() {
-            var chkBox = document.getElementById(chkbox).value;
+            var chkBox = document.getElementById().value;
             alert(chkBox);
-            if (chkBox == 1) {
+            if (document.getElementById(p1).checked) {
                 document.getElementById("p1").setAttribute("display", "block");
                 document.getElementById("p2").setAttribute("display", "none");
                 document.getElementById("p3").setAttribute("display", "none");
             }
-            else if (chkBox == 2) {
+            else if (document.getElementById(p1).checked) {
                 document.getElementById("p1").setAttribute("display", "none");
                 document.getElementById("p2").setAttribute("display", "block");
                 document.getElementById("p3").setAttribute("display", "none");
             }
-            else if (chkBox == 3) {
+            else if (document.getElementById(p1).checked) {
                 document.getElementById("p1").setAttribute("display", "none");
                 document.getElementById("p2").setAttribute("display", "none");
                 document.getElementById("p3").setAttribute("display", "block");
