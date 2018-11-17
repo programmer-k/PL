@@ -34,7 +34,14 @@
         },
 
         mostbreakfastquanti: function (g) {
-
+            var num_to_amount = { "0": "매우 적음", "1": "적음", "2": "많음", "3": "매우 많음" };
+            var arr = [0, 0, 0, 0]; var maxIndex = 0;
+            arr[0] = G.sum(g, () => 1, (n) => { return G.attr("meal_type", "아침")(n) && G.attr("amount_of_food", "매우 적음")(n) }, G.valeq("food"));
+            arr[1] = G.sum(g, () => 1, (n) => { return G.attr("meal_type", "아침")(n) && G.attr("amount_of_food", "적음")(n) }, G.valeq("food"));
+            arr[2] = G.sum(g, () => 1, (n) => { return G.attr("meal_type", "아침")(n) && G.attr("amount_of_food", "많음")(n) }, G.valeq("food"));
+            arr[3] = G.sum(g, () => 1, (n) => { return G.attr("meal_type", "아침")(n) && G.attr("amount_of_food", "매우 많음")(n) }, G.valeq("food"));
+            for (var i = 0; i < 4; i++) if (arr[maxIndex] < arr[i]) maxIndex = i;
+            return num_to_amount[maxIndex.toString()];
         },
 
         mood: function (g) {
@@ -59,8 +66,9 @@
             function day(d) {
                 return 10000 * d.getFullYear() + 100 * d.getMonth() + d.getDate();
             }
-            var sc = new TimeSchedule(TimeSchedule.timeFromhms(21), TimeSchedule.timeFromhms(3));
-            return G.timeRanges(g, (n) => sc.contains(new Date(n.value)), G.valeq("food"), 60000).map((n) => day(n.from)).reduce((p, v, i, a) => i == 0 ? 1 : v == a[i - 1] ? p : p + 1, 0) / Test.i(TimeRange.sumlength(timeranges));
+            //var sc = new TimeSchedule(TimeSchedule.timeFromhms(21), TimeSchedule.timeFromhms(3));
+            //return G.timeRanges(g, (n) => sc.contains(new Date(n.value)), G.valeq("food"), 60000).map((n) => day(n.from)).reduce((p, v, i, a) => i == 0 ? 1 : v == a[i - 1] ? p : p + 1, 0) / Test.i(TimeRange.sumlength(timeranges));
+            return G.timeRanges(g, G.attr("meal_type", "야식"), G.valeq("food"), TimeSchedule.timeFromhms(2)).map((n) => day(n.from)).length / Test.i(TimeRange.sumlength(timeranges));
         },
 
         avgmanyfood: function (g, timeranges) {
@@ -84,7 +92,10 @@
         },
 
         startsleep: function (g) {
-
+            return G.average_time_in_day(G.getSleep(g), TimeSchedule.timeFromhms(12), false);
+            var a = G.getSleep(g);
+            a.shift();
+            return (a.reduce((p, v) => p + (TimeSchedule.timeInDay(v.from) + TimeSchedule.timeFromhms(12)) % TimeSchedule.timeFromhms(24), 0) / a.length + TimeSchedule.timeFromhms(12)) % TimeSchedule.timeFromhms(24);
         },
 
         avgquanti: function (g) {
