@@ -20,5 +20,5 @@ TimeSchedule.prototype.contains = function (d) {
         (t >= this.from || t <= this.to);
 };
 
-TimeSchedule.day = Test.log(TimeSchedule.timeFromhms(24));
+TimeSchedule.day = Test.i(TimeSchedule.timeFromhms(24));
 TimeSchedule.week = TimeSchedule.timeFromhms(24 * 7);

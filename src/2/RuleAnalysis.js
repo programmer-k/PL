@@ -135,7 +135,10 @@ var GraphFunctions = (function () {
         return duration(n, timerange) / 60000;
     }
     function attr(a, v) {
-        return (n) => n.getChildByAttr(a).value.split("|").some((x) => x == v);
+        return (n) => {
+            var c = n.getChildByAttr(a);
+            return c && c.value.split("|").indexOf(v) != -1
+        };
     }
     function valeq(v) {
         return (n) => n.value == v;
@@ -164,7 +167,7 @@ var RuleAnalyzer = {
             return (a.reduce((p, v) => p + (TimeSchedule.timeInDay(v.from) + TimeSchedule.timeFromhms(12)) % TimeSchedule.timeFromhms(24), 0) / a.length + TimeSchedule.timeFromhms(12)) % TimeSchedule.timeFromhms(24);
         },
         wakeup: function (g) {
-            return Average.average_time_in_day(SearchGraph.getSleep(g), 0, false);
+            return Average.average_time_in_day(SearchGraph.getSleep(g), 0, true);
             var a = SearchGraph.getSleep(g);
             a.pop();
             //alert(a.map((x) => x.to).join("\n"));
@@ -177,6 +180,12 @@ var RuleAnalyzer = {
             return SearchGraph.timeRanges(g, () => true, GraphFunctions.valeq("sleep"), 60000).length / TimeRange.sumlength(timeranges);
             //return SearchGraph.listValue(g, TimeRange.fromGraph, () => true, (n) => n.value == "sleep").sort(cmp((a, b) => a.from < b.from)).reduce((p, v, i, a) => p == 0 ? 1 : TimeRange.intersect(v, a[i - 1]) ? p : p + 1, 0) / TimeRange.sumlength(timeranges);
         },
+        breakfast: function (g, timeranges) {
+            return Average.average_per_time(g, () => 1, GraphFunctions.attr("meal_type", "아침"), GraphFunctions.valeq("food"), timeranges);
+        },
+        weekendwakeup: function (g) {
+            return Average.average_time_in_day(SearchGraph.getSleep(g).filter((x) => [0, 6].indexOf(x.from.getDay()) != -1), 0, true);
+        }
     },
     food: {
         /*
