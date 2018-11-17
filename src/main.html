@@ -318,6 +318,9 @@
 
         // 체크 박스 클릭하면 그에 따른 출력을 해주는 함수.
         function clic() {
+            alert(document.getElementById("morning").checked);
+            alert(document.getElementById("nighteat").checked);
+            alert(document.getElementById("outgoing").checked);
             if (document.getElementById("morning").checked) {
                 document.getElementById("p1").setAttribute("display", "block");
                 document.getElementById("p2").setAttribute("display", "none");
