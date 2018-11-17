@@ -254,7 +254,7 @@
             s += "\n" + show_node(n.getChildByAttr("end_time"));
             //*/
 
-            var timeranges = GraphFunctions.getTimeRange(r);
+            var timeranges = G.getTimeRange(r);
 
             s = "";
             //s += "Average food time: " + Format.mstos(RuleAnalyzer.foodtime(r)) + "\n";
@@ -303,6 +303,13 @@
 
         function printPattern() {
 
+            var r = manager.root;
+
+            var s = "";
+
+            s += "식사 -> emotion 좋음: " + GraphAnalysis.test(r);
+
+            document.getElementById("pinfo").innerText = s;
         }
 
         function switchTab() {
@@ -319,6 +326,7 @@
         }
 
     </script>
+    <script src="analysis/Graph.js"></script>
     <script src="analysis/RuleAnalysis.js"></script>
     <script src="analysis/GraphAnalysis.js"></script>
     <script src="util/Format.js"></script>
