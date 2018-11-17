@@ -5,13 +5,6 @@
     <meta charset="utf-8" http-equiv="encoding">
     <title>Sclab_Lifelog_demo</title>
 
-    <style>
-        #p1, #p2, #p3 {
-            display: none;
-        }
-
-    </style>
-
     <script src="../dist/moment.min.js"></script>
     <script src="../dist/jquery.min.js"></script>
     <script src="../dist/jquery.daterangepicker.min.js"></script>
@@ -318,9 +311,6 @@
 
         // 체크 박스 클릭하면 그에 따른 출력을 해주는 함수.
         function clic() {
-            alert(document.getElementById("morning").checked);
-            alert(document.getElementById("nighteat").checked);
-            alert(document.getElementById("outgoing").checked);
             if (document.getElementById("morning").checked) {
                 document.getElementById("p1").style.display = "block";
                 document.getElementById("p2").style.display = "none";
