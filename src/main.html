@@ -258,10 +258,10 @@
 
             s = "";
             //s += "Average food time: " + Format.mstos(RuleAnalyzer.foodtime(r)) + "\n";
-            s += "Average go to bed: " + Format.mstos(RuleAnalyzer.gotobed(r)) + "\n";
-            s += "Average sleep time per day: " + Format.mstos(Test.i(RuleAnalyzer.sleeptime(r, timeranges) * 86400000)) + "\n";
-            s += "Average sleep duration: " + Format.mstos(Test.i(RuleAnalyzer.sleepduration(r))) + "\n";
-            s += "Average sleeps per day: " + RuleAnalyzer.sleepsperday(r, timeranges) * 86400000;
+            s += "Average go to bed: " + Format.mstos(RuleAnalyzer.sleep.gotobed(r)) + "\n";
+            s += "Average sleep time per day: " + Format.mstos(Test.i(RuleAnalyzer.sleep.sleeptime(r, timeranges) * 86400000)) + "\n";
+            s += "Average sleep duration: " + Format.mstos(Test.i(RuleAnalyzer.sleep.sleepduration(r))) + "\n";
+            s += "Average sleeps per day: " + RuleAnalyzer.sleep.sleepsperday(r, timeranges) * 86400000;
 
             document.getElementById("rinfo").innerText = s;
         }
