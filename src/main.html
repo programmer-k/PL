@@ -5,6 +5,13 @@
     <meta charset="utf-8" http-equiv="encoding">
     <title>Sclab_Lifelog_demo</title>
 
+    <style>
+        #p1, #p2, #p3 {
+            display: none;
+        }
+
+    </style>
+
     <script src="../dist/moment.min.js"></script>
     <script src="../dist/jquery.min.js"></script>
     <script src="../dist/jquery.daterangepicker.min.js"></script>
@@ -265,7 +272,7 @@
             s += "<label><input type='radio' id='outgoing' value='3' onclick='clic();'>외향적 인간</label>\n";4
             s += "</div>"
             //s += "Average sleep time per day: " + Format.mstos(Test.i(RuleAnalyzer.sleep.sleeptime(r, timeranges) * 86400000)) + "\n";
-            s += "<p id='p1' display='none'>"
+            s += "<p id='p1'>"
             s += "1. 잠드는 평균 시각: " + Format.mstos(RuleAnalyzer.sleep.gotobed(r)) + "\n";
             s += "2. 일어나는 평균 시각: " + Format.mstos(RuleAnalyzer.sleep.wakeup(r)) + "\n";
             s += "3. 평균 수면 지속 시간: " + Format.mstos(Test.i(RuleAnalyzer.sleep.sleepduration(r))) + "\n";
@@ -278,7 +285,7 @@
             s += "10. 일어나서 2시간 이내 발생하는 가장 긴 이동의 평균 지속 시간: " + Format.mstos(RuleAnalyzer.sleep.commutetime(r)) + "\n\n";
             s += "</p>";
 
-            s += "<p id='p2' display='none'>"
+            s += "<p id='p2'>"
             s += "1. 일주일간 야식먹은 평균 횟수: " + RuleAnalyzer.food.yasik(r, timeranges) * TimeSchedule.week + "\n";
             s += "2. 일주일간 야식 중 식사량이 '많음'인 평균 횟수: " + RuleAnalyzer.food.avgmanyfood(r, timeranges) + "\n";
             s += "3. 가장 많이 먹은 야식 종류: " + RuleAnalyzer.food.favofood(r) + "\n";
@@ -291,7 +298,7 @@
             s += "10. 야식을 먹은 후 수면까지 걸리는 평균 시간: " + Format.mstos(RuleAnalyzer.food.timetosleep(r)) + "\n\n";
             s += "</p>";
 
-            s += "<p id='p3' display='none'>"
+            s += "<p id='p3'>"
             s += "1. 일주일간 사교 활동 평균 시간: " + Format.mstos(RuleAnalyzer.life.sagyo(r, timeranges) * TimeSchedule.week) + "\n";
             s += "2. 평균 귀가 시각: " + Format.mstos(RuleAnalyzer.life.gohome(r)) + "\n";
             s += "3. 하루중 집에 있는 평균 시간: " + Format.mstos(RuleAnalyzer.life.stayhome(r, timeranges) * TimeSchedule.day) + "\n";
@@ -307,6 +314,8 @@
             document.getElementById("rinfo").innerHTML = s;
         }
         
+
+
         // 체크 박스 클릭하면 그에 따른 출력을 해주는 함수.
         function clic() {
             var chkBox = document.getElementById(chkbox).value;
