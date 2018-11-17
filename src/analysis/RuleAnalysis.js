@@ -31,6 +31,22 @@
         },
         weekendwakeup: function (g) {
             return Average.average_time_in_day(SearchGraph.getSleep(g).filter((x) => [0, 6].indexOf(x.from.getDay()) != -1), 0, true);
+        },
+
+        mostbreakfastquanti: function (g) {
+
+        },
+
+        mood: function (g) {
+
+        },
+
+        actibeforebed: function (g) {
+
+        },
+
+        commutetime: function (g) {
+
         }
     },
     food: {
@@ -45,6 +61,42 @@
             }
             var sc = new TimeSchedule(TimeSchedule.timeFromhms(21), TimeSchedule.timeFromhms(3));
             return SearchGraph.timeRanges(g, (n) => sc.contains(new Date(n.value)), GraphFunctions.valeq("food"), 60000).map((n) => day(n.from)).reduce((p, v, i, a) => i == 0 ? 1 : v == a[i - 1] ? p : p + 1, 0) / Test.i(TimeRange.sumlength(timeranges));
+        },
+
+        avgmanyfood: function (g, timeranges) {
+
+        },
+
+        favofood: function (g) {
+
+        },
+
+        diffdinneryasik: function (g, timeranges) {
+
+        },
+
+        mostdinnerquanti: function (g) {
+
+        },
+
+        wakeuphunger: function (g) {
+
+        },
+
+        startsleep: function (g) {
+
+        },
+
+        avgquanti: function (g) {
+
+        },
+
+        diffmood: function (g) {
+
+        },
+
+        timetosleep: function (g) {
+
         }
     },
     life: {
@@ -69,5 +121,21 @@
         restocafe: function (g, timeranges) {
             return Average.average_time(g, (n) => n.getChildByAttr("place").value.split("|").some((x) => x == "식당" || x == "카페"), () => true, timeranges);
         },
+
+        avgexerhobout: function (g, timeranges) {
+
+        },
+
+        avgmood: function (g) {
+
+        },
+
+        diffmood: function (g) {
+
+        },
+
+        diffmealquanti: function (g) {
+
+        }
     }
 };
