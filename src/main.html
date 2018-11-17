@@ -267,9 +267,9 @@
             //s += "Average food time: " + Format.mstos(RuleAnalyzer.foodtime(r)) + "\n";
 
             s += "<div id='chkbox'>"
-            s += "<label><input type='radio' id='morning' value='1' onclick='clic();'>아침형 인간</label>\n"
-            s += "<label><input type='radio' id='nighteat' value='2' onclick='clic();'>야식증</label>\n";
-            s += "<label><input type='radio' id='outgoing' value='3' onclick='clic();'>외향적 인간</label>\n";4
+            s += "<label><input type='radio' name='chk' id='morning' value='1' onclick='clic();'>아침형 인간</label>\n"
+            s += "<label><input type='radio' name='chk' id='nighteat' value='2' onclick='clic();'>야식증</label>\n";
+            s += "<label><input type='radio' name='chk' id='outgoing' value='3' onclick='clic();'>외향적 인간</label>\n";4
             s += "</div>"
             //s += "Average sleep time per day: " + Format.mstos(Test.i(RuleAnalyzer.sleep.sleeptime(r, timeranges) * 86400000)) + "\n";
             s += "<p id='p1'>"
@@ -322,19 +322,19 @@
             alert(document.getElementById("nighteat").checked);
             alert(document.getElementById("outgoing").checked);
             if (document.getElementById("morning").checked) {
-                document.getElementById("p1").setAttribute("display", "block");
-                document.getElementById("p2").setAttribute("display", "none");
-                document.getElementById("p3").setAttribute("display", "none");
+                document.getElementById("p1").style.display = "block";
+                document.getElementById("p2").style.display = "none";
+                document.getElementById("p3").style.display = "none";
             }
             else if (document.getElementById("nighteat").checked) {
-                document.getElementById("p1").setAttribute("display", "none");
-                document.getElementById("p2").setAttribute("display", "block");
-                document.getElementById("p3").setAttribute("display", "none");
+                document.getElementById("p1").style.display = "none";
+                document.getElementById("p2").style.display = "block";
+                document.getElementById("p3").style.display = "none";
             }
             else if (document.getElementById("outgoing").checked) {
-                document.getElementById("p1").setAttribute("display", "none");
-                document.getElementById("p2").setAttribute("display", "none");
-                document.getElementById("p3").setAttribute("display", "block");
+                document.getElementById("p1").style.display = "none";
+                document.getElementById("p2").style.display = "none";
+                document.getElementById("p3").style.display = "block";
             }
 
         }
