@@ -136,25 +136,29 @@ TimeRange.fromGraph = (g) => new TimeRange(new Date(Test.i(g).value), new Date(T
 TimeRange.sumlength = (s) => s.reduce((p, v) => p + v.length(), 0);
 
 var RuleAnalyzer = {
-    foodtime: function (g) {
-        return Average.average_per_occurrence(g, GraphFunctions.duration, () => true, (n) => n.value == "food");
+    food: {
+        foodtime: function (g) {
+            return Average.average_per_occurrence(g, GraphFunctions.duration, () => true, (n) => n.value == "food");
+        },
     },
-    sleeptime: function (g, timeranges) {
-        return Average.average_time(g, () => true, (n) => n.value == "sleep", timeranges);
-    },
-    gotobed: function (g) {
-        //return Average.average_per_occurrence(g, GraphFunctions. duration, (n) => TimeRange.fromGraph(n).length() >= 7200000);
-        return NaN;
-    },
-    wakeup: function (g) {
-        return NaN;
-    },
-    sleepduration: function (g) {
-        return ((a) => id(true, alert(a.map((x) => x.from.toString() + "~" + x.to.toString()).join("\n"))) && a.reduce((p, v) => p + v.length(), 0) / a.length)(SearchGraph.timeRanges(g, () => true, (n) => n.value == "sleep"));
-    },
-    sleepsperday: function (g, timeranges) {//issue: 연속된 수면 합치기
-        return SearchGraph.timeRanges(g, () => true, (n) => n.value == "sleep").length / TimeRange.sumlength(timeranges);
-        //return SearchGraph.listValue(g, TimeRange.fromGraph, () => true, (n) => n.value == "sleep").sort(cmp((a, b) => a.from < b.from)).reduce((p, v, i, a) => p == 0 ? 1 : TimeRange.intersect(v, a[i - 1]) ? p : p + 1, 0) / TimeRange.sumlength(timeranges);
+    sleep: {
+        sleeptime: function (g, timeranges) {
+            return Average.average_time(g, () => true, (n) => n.value == "sleep", timeranges);
+        },
+        gotobed: function (g) {
+            //return Average.average_per_occurrence(g, GraphFunctions. duration, (n) => TimeRange.fromGraph(n).length() >= 7200000);
+            return NaN;
+        },
+        wakeup: function (g) {
+            return NaN;
+        },
+        sleepduration: function (g) {
+            return ((a) => id(true, alert(a.map((x) => x.from.toString() + "~" + x.to.toString()).join("\n"))) && a.reduce((p, v) => p + v.length(), 0) / a.length)(SearchGraph.timeRanges(g, () => true, (n) => n.value == "sleep"));
+        },
+        sleepsperday: function (g, timeranges) {//issue: 연속된 수면 합치기
+            return SearchGraph.timeRanges(g, () => true, (n) => n.value == "sleep").length / TimeRange.sumlength(timeranges);
+            //return SearchGraph.listValue(g, TimeRange.fromGraph, () => true, (n) => n.value == "sleep").sort(cmp((a, b) => a.from < b.from)).reduce((p, v, i, a) => p == 0 ? 1 : TimeRange.intersect(v, a[i - 1]) ? p : p + 1, 0) / TimeRange.sumlength(timeranges);
+        },
     },
 };
 
