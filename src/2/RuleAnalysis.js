@@ -22,10 +22,19 @@
         return g.children_list.reduce((p, n) => filter(n) ? p + f(n) : p, 0);
     }
 
+    function average_time_in_day(a, split_time, end) {
+        if (end)
+            a.pop();
+        else
+            a.shift();
+        return Test.i((a.reduce((p, v) => p + (TimeSchedule.timeInDay(end ? v.to : v.from) + split_time) % TimeSchedule.day, 0) / a.length + split_time) % TimeSchedule.day);
+    }
+
     return {
         average_per_occurrence: average_per_occurrence,
         average_per_time: average_per_time,
         average_time: average_time,
+        average_time_in_day: average_time_in_day,
         sum: sum,
         sum_sg: sum_sg,
     };
@@ -70,8 +79,15 @@ var SearchGraph = (function () {
         g.children_list.forEach((n) => filter(n) && ff(out, f(n)), 0);
     }
 
-    function timeRanges(g, filter, category, epsilon) {
-        return listValue(g, TimeRange.fromGraph, filter, category).sort(cmp((a, b) => a.from < b.from)).reduce((p, v) => id(p, p == 0 ? p.push(v) : TimeRange.intersect(p[p.length - 1], v, epsilon) ? p[p.length - 1] = TimeRange.union(p[p.length - 1], v) : p.push(v)), []);
+    function timeRanges(g, filter, category, epsilon, min) {
+        var a = listValue(g, TimeRange.fromGraph, filter, category).sort(cmp((a, b) => a.from < b.from)).reduce((p, v) => id(p, p == 0 ? p.push(v) : TimeRange.intersect(p[p.length - 1], v, epsilon) ? p[p.length - 1] = TimeRange.union(p[p.length - 1], v) : p.push(v)), []);
+        if (min)
+            return a.reduce((p, v) => id(p, v.length() >= min ? p.push(v) : void(0)), []);
+        return a;
+    }
+
+    function getSleep(g) {
+        return SearchGraph.timeRanges(g, () => true, GraphFunctions.valeq("sleep"), TimeSchedule.timeFromhms(4), TimeSchedule.timeFromhms(2));
     }
 
     return {
@@ -82,6 +98,7 @@ var SearchGraph = (function () {
         fold_sg: fold_sg,
         mode: mode,
         timeRanges: timeRanges,
+        getSleep: getSleep,
     };
 })();
 
@@ -141,10 +158,17 @@ var RuleAnalyzer = {
         //*/
         gotobed: function (g) {
             //return Average.average_per_occurrence(g, GraphFunctions. duration, (n) => TimeRange.fromGraph(n).length() >= 7200000);
-            return NaN;
+            return Average.average_time_in_day(SearchGraph.getSleep(g), TimeSchedule.timeFromhms(12), false);
+            var a = SearchGraph.getSleep(g);
+            a.shift();
+            return (a.reduce((p, v) => p + (TimeSchedule.timeInDay(v.from) + TimeSchedule.timeFromhms(12)) % TimeSchedule.timeFromhms(24), 0) / a.length + TimeSchedule.timeFromhms(12)) % TimeSchedule.timeFromhms(24);
         },
         wakeup: function (g) {
-            return NaN;
+            return Average.average_time_in_day(SearchGraph.getSleep(g), 0, false);
+            var a = SearchGraph.getSleep(g);
+            a.pop();
+            //alert(a.map((x) => x.to).join("\n"));
+            return a.reduce((p, v) => p + TimeSchedule.timeInDay(v.to), 0) / a.length;
         },
         sleepduration: function (g) {
             return ((a) => /*id(true, (a.map((x) => x.from.toString() + "~" + x.to.toString()).join("\n"))) &&*/ a.reduce((p, v) => p + v.length(), 0) / a.length)(SearchGraph.timeRanges(g, () => true, GraphFunctions.valeq("activity")));
@@ -173,23 +197,29 @@ var RuleAnalyzer = {
             return Test.i(Average.average_time(g, GraphFunctions.attr("activity", "사교"), GraphFunctions.valeq("activity"), timeranges));
         },
         gohome: function (g) {
-            var a = SearchGraph.timeRanges(g, GraphFunctions.attr("place", "집"), () => true, TimeSchedule.timeFromhms(1));
+            return Average.average_time_in_day(SearchGraph.timeRanges(g, GraphFunctions.attr("place", "집"), () => true, TimeSchedule.timeFromhms(3)), TimeSchedule.timeFromhms(12), false);
+            var a = SearchGraph.timeRanges(g, GraphFunctions.attr("place", "집"), () => true, TimeSchedule.timeFromhms(3));
             a.shift();
-            alert(a.map((x) => x.from + "~" + x.to).join("\n"));
             return (a.reduce((p, v) => p + (TimeSchedule.timeInDay(v.from) + TimeSchedule.timeFromhms(12)) % TimeSchedule.timeFromhms(24), 0) / a.length + TimeSchedule.timeFromhms(12)) % TimeSchedule.timeFromhms(24);
         },
         stayhome: function (g, timeranges) {
-            return Average.average_time(g, GraphFunctions.attr("place", "집"), GraphFunctions.valeq("activity"), timeranges);
+            return Average.average_time(g, GraphFunctions.attr("place", "집"), () => true, timeranges);
+        },
+        together: function (g, timeranges) {
+            return Average.average_time(g, (n) => ((x) => ["", "/", "혼자"].every((y) => y != x))(n.getChildByAttr("person").value), () => true, timeranges);
         },
         move: function (g, timeranges) {
             return Average.average_time(g, GraphFunctions.attr("activity", "이동"), GraphFunctions.valeq("activity"), timeranges);
+        },
+        restocafe: function (g, timeranges) {
+            return Average.average_time(g, (n) => n.getChildByAttr("place").value.split("|").some((x) => x == "식당" || x == "카페"), () => true, timeranges);
         },
     }
 };
 
 var Test = (function () {
     function log(x) {
-        document.write(x);
+        alert(x);
         return x;
     }
 

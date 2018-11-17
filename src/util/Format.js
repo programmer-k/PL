@@ -18,6 +18,8 @@ var Format = (function () {
         return truncate((Math.ceil(x * Math.pow(10, n)) * Math.pow(0.1, n)).toString(), n);
     }
     function formatint(x, n, s) {
+        x = x.toString();
+        //alert([n - x.length, s.repeat(n - x.length)]);
         return s.repeat(n - x.length) + x;
     }
 
