@@ -259,7 +259,7 @@
             s = "";
             //s += "Average food time: " + Format.mstos(RuleAnalyzer.foodtime(r)) + "\n";
             s += "아침형 인간 \n"
-            s += "Average sleep time per day: " + Format.mstos(Test.i(RuleAnalyzer.sleep.sleeptime(r, timeranges) * 86400000)) + "\n";
+            //s += "Average sleep time per day: " + Format.mstos(Test.i(RuleAnalyzer.sleep.sleeptime(r, timeranges) * 86400000)) + "\n";
             s += "1. 잠드는 평균 시각: " + Format.mstos(RuleAnalyzer.sleep.gotobed(r)) + "\n";
             s += "2. 일어나는 평균 시각: " + Format.mstos(RuleAnalyzer.sleep.wakeup(r)) + "\n";
             s += "3. 평균 수면 지속 시간: " + Format.mstos(Test.i(RuleAnalyzer.sleep.sleepduration(r))) + "\n";
@@ -273,7 +273,7 @@
 
 
             s += "야식증\n"
-            s += "1. 일주일간 야식먹은 평균 횟수: " + "\n";
+            s += "1. 일주일간 야식먹은 평균 횟수: " + RuleAnalyzer.food.yasik(r, timeranges) * 604800000 + "\n";
             s += "2. 일주일간 야식 중 식사량이 '많음'인 평균 횟수: " + "\n";
             s += "3. 가장 많이 먹은 야식 종류: " + "\n";
             s += "4. 저녁 식사와 야식 사이의 평균 시간: " + "\n";
@@ -286,8 +286,8 @@
 
 
             s += "외향적\n";
-            s += "1. 일주일간 사교 활동 평균 횟수: " + "\n";
-            s += "2. 평균 귀가 시각: " + "\n";
+            s += "1. 일주일간 사교 활동 평균 시간: " + Format.mstos(RuleAnalyzer.life.sagyo(r, timeranges) * 604800000) + "\n";
+            s += "2. 평균 귀가 시각: " + Format.mstos(RuleAnalyzer.life.gohome(r)) + "\n";
             s += "3. 하루중 집에 있는 평균 시간: " + "\n";
             s += "4. 하루중 다른 사람과 함께 있는 평균 시간: " + "\n";
             s += "5. 일주일간 운동, 능동적 여가, 야외활동 평균 횟수: " + "\n";
@@ -322,6 +322,7 @@
     <script src="2/RuleAnalysis.js"></script>
     <script src="util/Format.js"></script>
     <script src="util/TimeRange.js"></script>
+    <script src="util/TimeSchedule.js"></script>
 </head>
 
 <body>
@@ -336,11 +337,11 @@
             <div class="group">
                 <div class="row">
                     <div class="label">Date</div>
-                    <input class="fit" id="date" value="2018-09-24 to 2018-10-07">
+                    <input class="fit" id="date" value="2018-09-10 to 2018-09-24">
                 </div>
                 <div class="row">
                     <div class="label">Person Index</div>
-                    <input id="personIndex" class="fit" type="number" step="1" min="0" value="1">
+                    <input id="personIndex" class="fit" type="number" step="1" min="0" value="3">
                 </div>
                 <div class="row">
                     <div class="label">Data</div>

@@ -62,7 +62,7 @@ var SclabUtil = {
                 }
             }
         }
-        alert(totalDataset.reduce((p, v) => p + v[startTimeIndex] + "~" + v[endTimeIndex] + "\n", ""));
+        //alert(totalDataset.reduce((p, v) => p + v[startTimeIndex] + "~" + v[endTimeIndex] + "\n", ""));
         return totalDataset;
     },
     //파이썬의 zfill 함수와 같은 기능하는 함수. ex) pad(123,5) --> 00123

@@ -1,6 +1,6 @@
-var Average = (function () {
-    //g°¡ ·çÆ®ÀÎ ±×·¡ÇÁ¿¡ category¸¦ ¸¸Á·ÇÏ´Â ¼­ºê±×·¡ÇÁÀÇ ÀÚ½Ä Áß
-    //filter¸¦ ¸¸Á·ÇÏ´Â ¸ğµç »ç°ÇÀÇ fÀÇ Æò±ÕÀ» ±¸ÇÔ
+ï»¿var Average = (function () {
+    //gê°€ ë£¨íŠ¸ì¸ ê·¸ë˜í”„ì— categoryë¥¼ ë§Œì¡±í•˜ëŠ” ì„œë¸Œê·¸ë˜í”„ì˜ ìì‹ ì¤‘
+    //filterë¥¼ ë§Œì¡±í•˜ëŠ” ëª¨ë“  ì‚¬ê±´ì˜ fì˜ í‰ê· ì„ êµ¬í•¨
     function average_per_occurrence(g, f, filter, category) {
         return sum(g, f, filter, category) / sum(g, function () { return 1; }, filter, category);
     }
@@ -98,7 +98,7 @@ var GraphFunctions = (function () {
         for (var i = 1; i < S.length; i++) {
             var t = oneday(S[i]);
             //if (t != t)
-                //alert(S[i]);
+            //alert(S[i]);
             var p = ret[ret.length - 1];
             if (TimeRange.intersect(p, t))
                 ret[ret.length - 1] = TimeRange.union(p, t);
@@ -109,7 +109,7 @@ var GraphFunctions = (function () {
     }
 
     function duration(n, timerange) {
-        var x = new TimeRange(new Date(n.value), new Date(n.getChildByAttr("end_time").value));
+        var x = TimeRange.fromGraph(n);
         if (timerange)
             x = TimeRange.intersection(x, timerange);
         return x.length();
@@ -125,15 +125,12 @@ var GraphFunctions = (function () {
 })();
 
 var RuleAnalyzer = {
-    food: {
-        foodtime: function (g) {
-            return Average.average_per_occurrence(g, GraphFunctions.duration, () => true, (n) => n.value == "food");
-        },
-    },
     sleep: {
+        /*
         sleeptime: function (g, timeranges) {
             return Average.average_time(g, () => true, (n) => n.value == "sleep", timeranges);
         },
+        //*/
         gotobed: function (g) {
             //return Average.average_per_occurrence(g, GraphFunctions. duration, (n) => TimeRange.fromGraph(n).length() >= 7200000);
             return NaN;
@@ -144,17 +141,40 @@ var RuleAnalyzer = {
         sleepduration: function (g) {
             return ((a) => /*id(true, (a.map((x) => x.from.toString() + "~" + x.to.toString()).join("\n"))) &&*/ a.reduce((p, v) => p + v.length(), 0) / a.length)(SearchGraph.timeRanges(g, () => true, (n) => n.value == "sleep"));
         },
-        sleepsperday: function (g, timeranges) {//issue: ¿¬¼ÓµÈ ¼ö¸é ÇÕÄ¡±â
+        sleepsperday: function (g, timeranges) {//issue: ì—°ì†ëœ ìˆ˜ë©´ í•©ì¹˜ê¸°
             return SearchGraph.timeRanges(g, () => true, (n) => n.value == "sleep").length / TimeRange.sumlength(timeranges);
             //return SearchGraph.listValue(g, TimeRange.fromGraph, () => true, (n) => n.value == "sleep").sort(cmp((a, b) => a.from < b.from)).reduce((p, v, i, a) => p == 0 ? 1 : TimeRange.intersect(v, a[i - 1]) ? p : p + 1, 0) / TimeRange.sumlength(timeranges);
         },
-
     },
+    food: {
+        /*
+        foodtime: function (g) {
+            return Average.average_per_occurrence(g, GraphFunctions.duration, () => true, (n) => n.value == "food");
+        },
+        //*/
+        yasik: function (g, timeranges) {
+            function day(d) {
+                return 10000 * d.getFullYear() + 100 * d.getMonth() + d.getDate();
+            }
+            var sc = new TimeSchedule(TimeSchedule.timeFromhms(21), TimeSchedule.timeFromhms(3));
+            return SearchGraph.timeRanges(g, (n) => sc.contains(new Date(n.value)), (n) => n.value == "food").map((n) => day(n.from)).reduce((p, v, i, a) => i == 0 ? 1 : v == a[i - 1] ? p : p + 1, 0) / Test.i(TimeRange.sumlength(timeranges));
+        }
+    },
+    life: {
+        sagyo: function (g, timeranges) {
+            return Test.i(Average.average_time(g, (n) => Test.i(Test.i(n.getChildByAttr("activity").value).split("|").some((x) => Test.i(Test.i(x) == Test.i("ì‚¬êµ")))), (n) => n.value == "activity", timeranges));
+        },
+        gohome: function (g) {
+            var a = SearchGraph.timeRanges(g, (n) => n.getChildByAttr("place").value.split("|").some((n) => n == "ì§‘"), () => true);
+            alert(a.map((x) => x.from + "~" + x.to).join("\n"));
+            return a.reduce((p, v) => p + TimeSchedule.timeInDay(v.from), 0) / a.length;
+        }
+    }
 };
 
 var Test = (function () {
     function log(x) {
-        alert(x);
+        document.write(x);
         return x;
     }
 
@@ -168,7 +188,7 @@ var Test = (function () {
     }
 })();
 
-function cmp(lt) {//less than ÇÔ¼ö¸¦ -1 0 1ÇÔ¼ö·Î ¹Ù²Ş, Array.sort(cmp((a, b) => a < b));
+function cmp(lt) {//less than í•¨ìˆ˜ë¥¼ -1 0 1í•¨ìˆ˜ë¡œ ë°”ê¿ˆ, Array.sort(cmp((a, b) => a < b));
     return (a, b) => lt(a, b) ? -1 : lt(b, a) ? 1 : 0;
 }
 
