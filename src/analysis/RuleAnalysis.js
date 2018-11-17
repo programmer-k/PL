@@ -92,7 +92,10 @@
         },
 
         startsleep: function (g) {
-
+            return G.average_time_in_day(G.getSleep(g), TimeSchedule.timeFromhms(12), false);
+            var a = G.getSleep(g);
+            a.shift();
+            return (a.reduce((p, v) => p + (TimeSchedule.timeInDay(v.from) + TimeSchedule.timeFromhms(12)) % TimeSchedule.timeFromhms(24), 0) / a.length + TimeSchedule.timeFromhms(12)) % TimeSchedule.timeFromhms(24);
         },
 
         avgquanti: function (g) {

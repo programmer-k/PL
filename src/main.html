@@ -274,15 +274,15 @@
             document.getElementById("p1").innerHTML = s;
 
             var b = "1. 일주일간 야식먹은 평균 횟수: " + RuleAnalyzer.food.yasik(r, timeranges) * TimeSchedule.week + "<br>";
-            s += "2. 일주일간 야식 중 식사량이 '많음'인 평균 횟수: " + RuleAnalyzer.food.avgmanyfood(r, timeranges) + "<br>";
-            s += "3. 가장 많이 먹은 야식 종류: " + RuleAnalyzer.food.favofood(r) + "<br>";
-            s += "4. 저녁 식사와 야식 사이의 평균 시간: " + Format.mstos(RuleAnalyzer.food.diffdinneryasik(r, timeranges)) + "<br>";
-            s += "5. 저녁에 먹은 식사량 중 가장 많이 나온 식사량: " + RuleAnalyzer.food.mostdinnerquanti(r) + "<br>";
-            s += "6. 기상시 평균 허기 정도: " + RuleAnalyzer.food.wakeuphunger(r) + "<br>";
-            s += "7. 평균 수면 시작 시각: " + Format.mstos(RuleAnalyzer.food.startsleep(r)) + "<br>";
-            s += "8. 야식을 제외한 나머지 식사의 평균 식사량: " + RuleAnalyzer.food.avgquanti(r) + "<br>";
-            s += "9. 야식을 먹을 때와 먹은 후의 평균 감정 변화: " + RuleAnalyzer.food.diffmood(r) + "<br>";
-            s += "10. 야식을 먹은 후 수면까지 걸리는 평균 시간: " + Format.mstos(RuleAnalyzer.food.timetosleep(r)) + "<br>";
+            b += "2. 일주일간 야식 중 식사량이 '많음'인 평균 횟수: " + RuleAnalyzer.food.avgmanyfood(r, timeranges) + "<br>";
+            b += "3. 가장 많이 먹은 야식 종류: " + RuleAnalyzer.food.favofood(r) + "<br>";
+            b += "4. 저녁 식사와 야식 사이의 평균 시간: " + Format.mstos(RuleAnalyzer.food.diffdinneryasik(r, timeranges)) + "<br>";
+            b += "5. 저녁에 먹은 식사량 중 가장 많이 나온 식사량: " + RuleAnalyzer.food.mostdinnerquanti(r) + "<br>";
+            b += "6. 기상시 평균 허기 정도: " + RuleAnalyzer.food.wakeuphunger(r) + "<br>";
+            b += "7. 평균 수면 시작 시각: " + Format.mstos(RuleAnalyzer.food.startsleep(r)) + "<br>";
+            b += "8. 야식을 제외한 나머지 식사의 평균 식사량: " + RuleAnalyzer.food.avgquanti(r) + "<br>";
+            b += "9. 야식을 먹을 때와 먹은 후의 평균 감정 변화: " + RuleAnalyzer.food.diffmood(r) + "<br>";
+            b += "10. 야식을 먹은 후 수면까지 걸리는 평균 시간: " + Format.mstos(RuleAnalyzer.food.timetosleep(r)) + "<br>";
             document.getElementById("p2").innerHTML = b;
 
             var c = "1. 일주일간 사교 활동 평균 시간: " + Format.mstos(RuleAnalyzer.life.sagyo(r, timeranges) * TimeSchedule.week) + "<br>";
