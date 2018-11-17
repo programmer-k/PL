@@ -1,4 +1,9 @@
-﻿
+﻿function Leaf(value, nodes) {
+    this.value = value;
+    this.nodes = nodes.map(id);
+    this.parents = nodes.reduce((p, v));
+}
+
 var GraphAnalysis = (function () {
     function extract_leaf(g) {
         var s = {}, ret = {};

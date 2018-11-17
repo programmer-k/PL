@@ -120,6 +120,10 @@
         return (n) => n.value == v;
     }
 
+    function nodeid(n) {
+        return n.attribute + "||" + n.value;
+    }
+
     return {
         average_per_occurrence: average_per_occurrence,
         average_per_time: average_per_time,
@@ -140,6 +144,7 @@
         getTimeRange: getTimeRange,
         attr: attr,
         valeq: valeq,
+        nodeid: nodeid,
     };
 })();
 
