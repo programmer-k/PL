@@ -259,11 +259,7 @@
             s = "";
             //s += "Average food time: " + Format.mstos(RuleAnalyzer.foodtime(r)) + "\n";
 
-            s += "<div id='chkbox'>"
-            s += "<label><input type='radio' name='chk' id='morning' value='1' onclick='clic();'>아침형 인간</label>\n"
-            s += "<label><input type='radio' name='chk' id='nighteat' value='2' onclick='clic();'>야식증</label>\n";
-            s += "<label><input type='radio' name='chk' id='outgoing' value='3' onclick='clic();'>외향적 인간</label>\n";4
-            s += "</div>"
+            
             //s += "Average sleep time per day: " + Format.mstos(Test.i(RuleAnalyzer.sleep.sleeptime(r, timeranges) * 86400000)) + "\n";
             s += "<p id='p1'>"
             s += "1. 잠드는 평균 시각: " + Format.mstos(RuleAnalyzer.sleep.gotobed(r)) + "\n";
@@ -399,7 +395,13 @@
             </div>
 
             <h1 onclick="switchTab();"><span id="rhead">Rule Information</span><span style="display: none;" id="phead">Pattern Information</span></h1>
-            <div class="group last" id="rinfo" onclick="printRules();"></div>
+            <div class="group last" id="rinfo" onclick="printRules();">
+                    <div id='chkbox'>
+                        <label><input type='radio' name='chk' id='morning' value='1' onclick='clic();'>아침형 인간</label>
+                        <label><input type='radio' name='chk' id='nighteat' value='2' onclick='clic();'>야식증</label>
+                        <label><input type='radio' name='chk' id='outgoing' value='3' onclick='clic();'>외향적 인간</label>
+                    </div>
+            </div>
             <div class="group last" id="pinfo" onclick="printPattern();" style="display: none;"></div>
         </div>
     </div>
