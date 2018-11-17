@@ -1,4 +1,6 @@
 var Average = (function () {
+    //g가 루트인 그래프에 category를 만족하는 서브그래프의 자식 중
+    //filter를 만족하는 모든 사건의 f의 평균을 구함
     function average_per_occurrence(g, f, filter, category) {
         return sum(g, f, filter, category) / sum(g, function () { return 1; }, filter, category);
     }
@@ -122,19 +124,6 @@ var GraphFunctions = (function () {
     };
 })();
 
-function TimeRange(from, to) {//closed range
-    this.from = from;
-    this.to = to;
-}
-TimeRange.prototype.length = function () { return Test.i(Math.max(0, Test.i(Test.i(this.to) - Test.i(this.from)))); };
-TimeRange.prototype.contains = function (x) { return this.to - x >= 0 && x - this.from >= 0; };
-TimeRange.prototype.isEmpty = function () { return this.to - this.from < 0; };
-TimeRange.intersection = (a, b) => new TimeRange((a.from - b.from > 0 ? a : b).from, (a.to - b.to < 0 ? a : b).to);//if a, b intersect
-TimeRange.union = (a, b) => new TimeRange((a.from - b.from < 0 ? a : b).from, (a.to - b.to > 0 ? a : b).to);//if a, b intersect
-TimeRange.intersect = (a, b) => a.to - b.from >= -60000 && b.to - a.from >= -60000;
-TimeRange.fromGraph = (g) => new TimeRange(new Date(Test.i(g).value), new Date(Test.i(g.getChildByAttr("end_time")).value));
-TimeRange.sumlength = (s) => s.reduce((p, v) => p + v.length(), 0);
-
 var RuleAnalyzer = {
     food: {
         foodtime: function (g) {
@@ -159,6 +148,7 @@ var RuleAnalyzer = {
             return SearchGraph.timeRanges(g, () => true, (n) => n.value == "sleep").length / TimeRange.sumlength(timeranges);
             //return SearchGraph.listValue(g, TimeRange.fromGraph, () => true, (n) => n.value == "sleep").sort(cmp((a, b) => a.from < b.from)).reduce((p, v, i, a) => p == 0 ? 1 : TimeRange.intersect(v, a[i - 1]) ? p : p + 1, 0) / TimeRange.sumlength(timeranges);
         },
+
     },
 };
 
@@ -178,7 +168,7 @@ var Test = (function () {
     }
 })();
 
-function cmp(lt) {
+function cmp(lt) {//less than 함수를 -1 0 1함수로 바꿈, Array.sort(cmp((a, b) => a < b));
     return (a, b) => lt(a, b) ? -1 : lt(b, a) ? 1 : 0;
 }
 
