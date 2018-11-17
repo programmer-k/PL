@@ -1,6 +1,6 @@
-var Average = (function () {
-    //g°¡ ·çÆ®ÀÎ ±×·¡ÇÁ¿¡ category¸¦ ¸¸Á·ÇÏ´Â ¼­ºê±×·¡ÇÁÀÇ ÀÚ½Ä Áß
-    //filter¸¦ ¸¸Á·ÇÏ´Â ¸ğµç »ç°ÇÀÇ fÀÇ Æò±ÕÀ» ±¸ÇÔ
+ï»¿var G = (function () {
+    //gê°€ ë£¨íŠ¸ì¸ ê·¸ë˜í”„ì— categoryë¥¼ ë§Œì¡±í•˜ëŠ” ì„œë¸Œê·¸ë˜í”„ì˜ ìì‹ ì¤‘
+    //filterë¥¼ ë§Œì¡±í•˜ëŠ” ëª¨ë“  ì‚¬ê±´ì˜ fì˜ í‰ê· ì„ êµ¬í•¨
     function average_per_occurrence(g, f, filter, category) {
         return sum(g, f, filter, category) / sum(g, function () { return 1; }, filter, category);
     }
@@ -30,17 +30,6 @@ var Average = (function () {
         return Test.i((a.reduce((p, v) => p + (TimeSchedule.timeInDay(end ? v.to : v.from) + split_time) % TimeSchedule.day, 0) / a.length + split_time) % TimeSchedule.day);
     }
 
-    return {
-        average_per_occurrence: average_per_occurrence,
-        average_per_time: average_per_time,
-        average_time: average_time,
-        average_time_in_day: average_time_in_day,
-        sum: sum,
-        sum_sg: sum_sg,
-    };
-})();
-
-var SearchGraph = (function () {
     function listValue(g, f, filter, category) {
         return fold(g, f, filter, category, [], (s, v) => s.push(v));
     }
@@ -87,24 +76,11 @@ var SearchGraph = (function () {
     }
 
     function getSleep(g) {
-        return SearchGraph.timeRanges(g, () => true, GraphFunctions.valeq("sleep"), TimeSchedule.timeFromhms(4), TimeSchedule.timeFromhms(2));
+        return G.timeRanges(g, () => true, G.valeq("sleep"), TimeSchedule.timeFromhms(4), TimeSchedule.timeFromhms(2));
     }
 
-    return {
-        listValue: listValue,
-        values: values,
-        intValues: intValues,
-        fold: fold,
-        fold_sg: fold_sg,
-        mode: mode,
-        timeRanges: timeRanges,
-        getSleep: getSleep,
-    };
-})();
-
-var GraphFunctions = (function () {
     function getTimeRange(g) {
-        var S = SearchGraph.intValues(g, function (n) { var d = new Date(n.value); return new Date(d.getFullYear(), d.getMonth(), d.getDate()).getTime(); }, () => true, () => true);
+        var S = G.intValues(g, function (n) { var d = new Date(n.value); return new Date(d.getFullYear(), d.getMonth(), d.getDate()).getTime(); }, () => true, () => true);
         S.sort();
         function oneday(x) {
             var d = new Date(x);
@@ -143,7 +119,22 @@ var GraphFunctions = (function () {
     function valeq(v) {
         return (n) => n.value == v;
     }
+
     return {
+        average_per_occurrence: average_per_occurrence,
+        average_per_time: average_per_time,
+        average_time: average_time,
+        average_time_in_day: average_time_in_day,
+        sum: sum,
+        sum_sg: sum_sg,
+        listValue: listValue,
+        values: values,
+        intValues: intValues,
+        fold: fold,
+        fold_sg: fold_sg,
+        mode: mode,
+        timeRanges: timeRanges,
+        getSleep: getSleep,
         duration: duration,
         duration_min: duration_min,
         getTimeRange: getTimeRange,
@@ -168,7 +159,7 @@ var Test = (function () {
     }
 })();
 
-function cmp(lt) {//less than ÇÔ¼ö¸¦ -1 0 1ÇÔ¼ö·Î ¹Ù²Ş, Array.sort(cmp((a, b) => a < b));
+function cmp(lt) {//less than í•¨ìˆ˜ë¥¼ -1 0 1í•¨ìˆ˜ë¡œ ë°”ê¿ˆ, Array.sort(cmp((a, b) => a < b));
     return (a, b) => lt(a, b) ? -1 : lt(b, a) ? 1 : 0;
 }
 
