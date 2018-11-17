@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta content="text/html;charset=utf-8" http-equiv="Content-Type">
@@ -38,15 +38,15 @@
         });
 
         //fuction1: 타임라인 시각화 함수
-        function draw_timeline(){
+        function draw_timeline() {
             var timeline_container = document.getElementById('timeline_visualization');
-            if( manager == null) { timeline.init(null); }
+            if (manager == null) { timeline.init(null); }
             else { timeline.init(manager.gss); }
             timeline.draw(timeline_container);
         }
 
         //fuction2: 네트워크 시각화 함수
-        function draw_network(){
+        function draw_network() {
             if (network != null) {
                 network.destroy();
                 network = null;
@@ -82,7 +82,7 @@
                 }
             };
 
-            var data = {nodes: nodes, edges: edges}
+            var data = { nodes: nodes, edges: edges }
 
             //네트워크 구조에 데이터 추가
             network = new vis.Network(container, data, options);
@@ -91,7 +91,7 @@
         }
 
         //fuction3: 사용자 입력에 따른 데이터 로드 함수. Load 버튼 누를 시 작동.
-        function loadData(){
+        function loadData() {
             $("#date").attr("disabled", true);
             $("#personIndex").attr("disabled", true);
             $("#loadNode").attr("disabled", true);
@@ -112,12 +112,14 @@
             timeline.destroy();
             draw_timeline();
             resetAllNodes();
+
+            //testtt();
         }
 
         //fuction4: 서치 결과 리턴. Go버튼 누를 시 작동.
-        function loadSearchResult(){
+        function loadSearchResult() {
             //pattern search 결과
-            let searchResult = manager.searchNode($("#gss").val(),$("#date-hour").val(), $("#attribute").val())
+            let searchResult = manager.searchNode($("#gss").val(), $("#date-hour").val(), $("#attribute").val())
                 .map(([startsAt, endsAt, value]) => `${startsAt} ~ ${endsAt} : ${value}`)
                 .join("<br>");
 
@@ -134,7 +136,7 @@
             try {
                 var keywordValue = document.getElementById('keyword').value;
                 keyword = keywordValue.split(',');
-                if(keyword[0] == ""){
+                if (keyword[0] == "") {
                     keyword = null;
                 }
             } catch (err) {
@@ -144,7 +146,7 @@
             var tempNode = [];
             var tempEdge = [];
 
-            tempNode.push({id: (manager.root.attribute + manager.root.value), label: manager.root.value});
+            tempNode.push({ id: (manager.root.attribute + manager.root.value), label: manager.root.value });
             nodes = new vis.DataSet(tempNode);
             nodes.color = 'rgba(200,200,200,0.5)';
             edges = new vis.DataSet(tempEdge);
@@ -190,8 +192,8 @@
             let tempEdges = [];
             self.children_list.forEach((child) => {
                 remove_child_node(self, child);
-                tempNodes.push({id: child.id, label: child.value});
-                tempEdges.push({id: get_edge_id(self, child), from: self_id, to: child.id});
+                tempNodes.push({ id: child.id, label: child.value });
+                tempEdges.push({ id: get_edge_id(self, child), from: self_id, to: child.id });
             });
             // 읽어온 노드/엣지 정보 중에서 클릭 횟수에 따른 15개만 추리기
             if (tempNodes.length > self.open_count * 15) {
@@ -227,7 +229,63 @@
             nodes.remove(child_node.id);
             edges.remove(get_edge_id(parent_node, child_node));
         }
+
+        function printRules() {
+
+            //var manager = null;
+            //var timeline = new Timeline();
+            //
+            //var network = null;
+            //var nodes = null;
+            //var edges = null;
+
+            var r = manager.root;
+            /*
+            var gss = {};
+            for (var i = 0; i < r.children_list.length; i++) {
+                gss[r.children_list[i].value] = r.children_list[i];
+            }
+            //*/
+
+            /*
+            s = show_node(gss.activity);
+            var n = gss.activity.children_list[0];
+            s += "\n" + show_node(n);
+            s += "\n" + show_node(n.getChildByAttr("end_time"));
+            //*/
+
+            var timeranges = GraphFunctions.getTimeRange(r);
+
+            s = "";
+            //s += "Average food time: " + Format.mstos(RuleAnalyzer.foodtime(r)) + "\n";
+            s += "Average go to bed: " + Format.mstos(RuleAnalyzer.gotobed(r)) + "\n";
+            s += "Average sleep time per day: " + Format.mstos(Test.i(RuleAnalyzer.sleeptime(r, timeranges) * 86400000)) + "\n";
+            s += "Average sleep duration: " + Format.mstos(Test.i(RuleAnalyzer.sleepduration(r))) + "\n";
+            s += "Average sleeps per day: " + RuleAnalyzer.sleepsperday(r, timeranges) * 86400000;
+
+            document.getElementById("rinfo").innerText = s;
+        }
+
+        function printPattern() {
+
+        }
+
+        function switchTab() {
+            var t = document.getElementById("rinfo").style.display;
+            document.getElementById("rinfo").style.display = document.getElementById("pinfo").style.display;
+            document.getElementById("pinfo").style.display = t;
+            t = document.getElementById("rhead").style.display;
+            document.getElementById("rhead").style.display = document.getElementById("phead").style.display;
+            document.getElementById("phead").style.display = t;
+        }
+
+        function show_node(n) {
+            return n.attribute + ": " + n.value + "[" + n.children_list.length + "]";
+        }
+
     </script>
+    <script src="2/RuleAnalysis.js"></script>
+    <script src="util/Format.js"></script>
 </head>
 
 <body>
@@ -242,7 +300,7 @@
             <div class="group">
                 <div class="row">
                     <div class="label">Date</div>
-                    <input class="fit" id="date">
+                    <input class="fit" id="date" value="2018-09-24 to 2018-10-07">
                 </div>
                 <div class="row">
                     <div class="label">Person Index</div>
@@ -266,8 +324,9 @@
                 <div id="searchResult" class="rows"></div>
             </div>
 
-            <h1>Pattern Information</h1>
-            <div class="group last"></div>
+            <h1 onclick="switchTab();"><span id="rhead">Rule Information</span><span style="display: none;" id="phead">Pattern Information</span></h1>
+            <div class="group last" id="rinfo" onclick="printRules();"></div>
+            <div class="group last" id="pinfo" onclick="printPattern();" style="display: none;"></div>
         </div>
     </div>
 </body>

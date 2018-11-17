@@ -1,0 +1,2 @@
+start_time,end_time,activity,place,address,location,person,food,amount_of_food,meal_type,hunger,emotion,tiredness,temperature,humidity
+2018-09-17 00:00,2018-09-17 07:30,수면,집,서울시 중랑구 면목동,실내,혼자,/,/,/,예,부정,매우 낮음,낮음,매우 낮음

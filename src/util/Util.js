@@ -46,7 +46,7 @@ var SclabUtil = {
         for (var i=1; i<totalDataset.length -1; i++){ // i==0은 attribute 행임
             //종료시간 24:00인경우
             var endTimeString = totalDataset[i][endTimeIndex].split(' ')[1];
-            if( endTimeString == '00:00' || endTimeString == '24:00' || endTimeString == '23:59'){
+            if (endTimeString == '00:00' || endTimeString == '24:00' || endTimeString == '23:59'){
                 var isSame = true;
                 for (var j=0; j<totalDataset[0].length; j++) {
                     //다음 행과 현재 행에 대한 시간을 제외한 모든 값들이 동일하다면 합치기
