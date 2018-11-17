@@ -303,17 +303,57 @@
 
         // 체크 박스 클릭하면 그에 따른 출력을 해주는 함수.
         function clic() {
+            var r = manager.root;
+            var timeranges = G.getTimeRange(r);
+
             if (document.getElementById("morning").checked) {
+                var s = "1. 잠드는 평균 시각: " + Format.mstos(RuleAnalyzer.sleep.gotobed(r)) + "<br>";
+                s += "2. 일어나는 평균 시각: " + Format.mstos(RuleAnalyzer.sleep.wakeup(r)) + "<br>";
+                s += "3. 평균 수면 지속 시간: " + Format.mstos(Test.i(RuleAnalyzer.sleep.sleepduration(r)))  + "<br>";
+                s += "4. 수면 중 깬 횟수: " + RuleAnalyzer.sleep.sleepsperday(r, timeranges) * TimeSchedule.day  + "<br>";
+                s += "5. 일주일 중 아침 먹은 평균 횟수: " + RuleAnalyzer.sleep.breakfast(r, timeranges) * TimeSchedule.week  + "<br>";
+                s += "6. 아침에 먹은 식사량 중 가장 많이 나온 식사량: " + RuleAnalyzer.sleep.mostbreakfastquanti(r)  + "<br>";
+                s += "7. 아침에 일어났을 때 가장 많이 느끼는 감정: " + RuleAnalyzer.sleep.mood(r)  + "<br>";
+                s += "8. 주말에 일어나는 평균 시각: " + Format.mstos(RuleAnalyzer.sleep.weekendwakeup(r))  + "<br>";
+                s += "9. 자기 전에 가장 많이 하는 활동: " + RuleAnalyzer.sleep.actibeforebed(r)  + "<br>";
+                s += "10. 일어나서 2시간 이내 발생하는 가장 긴 이동의 평균 지속 시간: " + Format.mstos(RuleAnalyzer.sleep.commutetime(r)) + "<br>";
+                document.getElementById("p1").innerHTML = s;
+
                 document.getElementById("p1").style.display = "block";
                 document.getElementById("p2").style.display = "none";
                 document.getElementById("p3").style.display = "none";
             }
             else if (document.getElementById("nighteat").checked) {
+                var b = "1. 일주일간 야식먹은 평균 횟수: " + RuleAnalyzer.food.yasik(r, timeranges) * TimeSchedule.week + "<br>";
+                s += "2. 일주일간 야식 중 식사량이 '많음'인 평균 횟수: " + RuleAnalyzer.food.avgmanyfood(r, timeranges) + "<br>";
+                s += "3. 가장 많이 먹은 야식 종류: " + RuleAnalyzer.food.favofood(r) + "<br>";
+                s += "4. 저녁 식사와 야식 사이의 평균 시간: " + Format.mstos(RuleAnalyzer.food.diffdinneryasik(r, timeranges)) + "<br>";
+                s += "5. 저녁에 먹은 식사량 중 가장 많이 나온 식사량: " + RuleAnalyzer.food.mostdinnerquanti(r) + "<br>";
+                s += "6. 기상시 평균 허기 정도: " + RuleAnalyzer.food.wakeuphunger(r) + "<br>";
+                s += "7. 평균 수면 시작 시각: " + Format.mstos(RuleAnalyzer.food.startsleep(r)) + "<br>";
+                s += "8. 야식을 제외한 나머지 식사의 평균 식사량: " + RuleAnalyzer.food.avgquanti(r) + "<br>";
+                s += "9. 야식을 먹을 때와 먹은 후의 평균 감정 변화: " + RuleAnalyzer.food.diffmood(r) + "<br>";
+                s += "10. 야식을 먹은 후 수면까지 걸리는 평균 시간: " + Format.mstos(RuleAnalyzer.food.timetosleep(r)) + "<br>";
+                document.getElementById("p2").innerHTML = b;
+
                 document.getElementById("p1").style.display = "none";
                 document.getElementById("p2").style.display = "block";
                 document.getElementById("p3").style.display = "none";
             }
             else if (document.getElementById("outgoing").checked) {
+                var c = "1. 일주일간 사교 활동 평균 시간: " + Format.mstos(RuleAnalyzer.life.sagyo(r, timeranges) * TimeSchedule.week) + "<br>";
+                c += "2. 평균 귀가 시각: " + Format.mstos(RuleAnalyzer.life.gohome(r)) + "<br>";
+                c += "3. 하루중 집에 있는 평균 시간: " + Format.mstos(RuleAnalyzer.life.stayhome(r, timeranges) * TimeSchedule.day) + "<br>";
+                c += "4. 하루중 다른 사람과 함께 있는 평균 시간: " + Format.mstos(RuleAnalyzer.life.together(r, timeranges) * TimeSchedule.day) + "<br>";
+                c += "5. 일주일간 운동, 능동적 여가, 야외활동 평균 횟수: " + RuleAnalyzer.life.avgexerhobout(r, timeranges) + "<br>";
+                c += "6. 다른 사람과 함께 있을 때 감정의 평균값: " + RuleAnalyzer.life.avgmood(r)  + "<br>";
+                c += "7. 친밀한 사람과 함께 있을 때와 데면한 사람과 있을 때 평균적인 감정 차이: " + RuleAnalyzer.life.diffmood(r)  + "<br>";
+                c += "8. 하루중 이동에 들이는 평균 시간: " + Format.mstos(RuleAnalyzer.life.move(r, timeranges) * TimeSchedule.day)  + "<br>";
+                c += "9. 하루 중 식당 혹은 카페에 있는 평균 시간: " + Format.mstos(RuleAnalyzer.life.restocafe(r, timeranges) * TimeSchedule.day)  + "<br>";
+                c += "10. 혼자 식사할 때와 다른사람과 함께 식사할 때 식사량의 평균적인 차이: " + RuleAnalyzer.life.diffmealquanti(r)  + "<br>";
+
+                document.getElementById("p3").innerHTML = c;
+
                 document.getElementById("p1").style.display = "none";
                 document.getElementById("p2").style.display = "none";
                 document.getElementById("p3").style.display = "block";
