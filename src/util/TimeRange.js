@@ -26,8 +26,8 @@ TimeRange.intersection = (a, b) => new TimeRange((a.from - b.from > 0 ? a : b).f
 TimeRange.union = (a, b) => new TimeRange((a.from - b.from < 0 ? a : b).from, (a.to - b.to > 0 ? a : b).to);//if a, b intersect
 
 //TimeRange.intersect(TimeRange a, TimeRange b) => boolean
-//a와 b에 공통원소가 있는지 판단
-TimeRange.intersect = (a, b) => a.to - b.from >= -60000 && b.to - a.from >= -60000;
+//a와 b에 공통원소가 있는지 판단, e정도의 간격 허용
+TimeRange.intersect = (a, b, e) => a.to - b.from >= -(e ? e : 0) && b.to - a.from >= -(e ? e : 0);
 
 //TimeRange.intersection(Node g) => TimeRange
 //서브그래프의 start_time, end_time을 통해 TimeRange를 생성

@@ -70,8 +70,8 @@ var SearchGraph = (function () {
         g.children_list.forEach((n) => filter(n) && ff(out, f(n)), 0);
     }
 
-    function timeRanges(g, filter, category) {
-        return listValue(g, TimeRange.fromGraph, filter, category).sort(cmp((a, b) => a.from < b.from)).reduce((p, v) => id(p, p == 0 ? p.push(v) : TimeRange.intersect(p[p.length - 1], v) ? p[p.length - 1] = TimeRange.union(p[p.length - 1], v) : p.push(v)), []);
+    function timeRanges(g, filter, category, epsilon) {
+        return listValue(g, TimeRange.fromGraph, filter, category).sort(cmp((a, b) => a.from < b.from)).reduce((p, v) => id(p, p == 0 ? p.push(v) : TimeRange.intersect(p[p.length - 1], v, epsilon) ? p[p.length - 1] = TimeRange.union(p[p.length - 1], v) : p.push(v)), []);
     }
 
     return {
@@ -117,10 +117,18 @@ var GraphFunctions = (function () {
     function duration_min(n, timerange) {
         return duration(n, timerange) / 60000;
     }
+    function attr(a, v) {
+        return (n) => n.getChildByAttr(a).value.split("|").some((x) => x == v);
+    }
+    function valeq(v) {
+        return (n) => n.value == v;
+    }
     return {
         duration: duration,
         duration_min: duration_min,
         getTimeRange: getTimeRange,
+        attr: attr,
+        valeq: valeq,
     };
 })();
 
@@ -139,10 +147,10 @@ var RuleAnalyzer = {
             return NaN;
         },
         sleepduration: function (g) {
-            return ((a) => /*id(true, (a.map((x) => x.from.toString() + "~" + x.to.toString()).join("\n"))) &&*/ a.reduce((p, v) => p + v.length(), 0) / a.length)(SearchGraph.timeRanges(g, () => true, (n) => n.value == "sleep"));
+            return ((a) => /*id(true, (a.map((x) => x.from.toString() + "~" + x.to.toString()).join("\n"))) &&*/ a.reduce((p, v) => p + v.length(), 0) / a.length)(SearchGraph.timeRanges(g, () => true, GraphFunctions.valeq("activity")));
         },
         sleepsperday: function (g, timeranges) {//issue: 연속된 수면 합치기
-            return SearchGraph.timeRanges(g, () => true, (n) => n.value == "sleep").length / TimeRange.sumlength(timeranges);
+            return SearchGraph.timeRanges(g, () => true, GraphFunctions.valeq("sleep"), 60000).length / TimeRange.sumlength(timeranges);
             //return SearchGraph.listValue(g, TimeRange.fromGraph, () => true, (n) => n.value == "sleep").sort(cmp((a, b) => a.from < b.from)).reduce((p, v, i, a) => p == 0 ? 1 : TimeRange.intersect(v, a[i - 1]) ? p : p + 1, 0) / TimeRange.sumlength(timeranges);
         },
     },
@@ -157,18 +165,25 @@ var RuleAnalyzer = {
                 return 10000 * d.getFullYear() + 100 * d.getMonth() + d.getDate();
             }
             var sc = new TimeSchedule(TimeSchedule.timeFromhms(21), TimeSchedule.timeFromhms(3));
-            return SearchGraph.timeRanges(g, (n) => sc.contains(new Date(n.value)), (n) => n.value == "food").map((n) => day(n.from)).reduce((p, v, i, a) => i == 0 ? 1 : v == a[i - 1] ? p : p + 1, 0) / Test.i(TimeRange.sumlength(timeranges));
+            return SearchGraph.timeRanges(g, (n) => sc.contains(new Date(n.value)), GraphFunctions.valeq("food"), 60000).map((n) => day(n.from)).reduce((p, v, i, a) => i == 0 ? 1 : v == a[i - 1] ? p : p + 1, 0) / Test.i(TimeRange.sumlength(timeranges));
         }
     },
     life: {
         sagyo: function (g, timeranges) {
-            return Test.i(Average.average_time(g, (n) => Test.i(Test.i(n.getChildByAttr("activity").value).split("|").some((x) => Test.i(Test.i(x) == Test.i("사교")))), (n) => n.value == "activity", timeranges));
+            return Test.i(Average.average_time(g, GraphFunctions.attr("activity", "사교"), GraphFunctions.valeq("activity"), timeranges));
         },
         gohome: function (g) {
-            var a = SearchGraph.timeRanges(g, (n) => n.getChildByAttr("place").value.split("|").some((n) => n == "집"), () => true);
+            var a = SearchGraph.timeRanges(g, GraphFunctions.attr("place", "집"), () => true, TimeSchedule.timeFromhms(1));
+            a.shift();
             alert(a.map((x) => x.from + "~" + x.to).join("\n"));
-            return a.reduce((p, v) => p + TimeSchedule.timeInDay(v.from), 0) / a.length;
-        }
+            return (a.reduce((p, v) => p + (TimeSchedule.timeInDay(v.from) + TimeSchedule.timeFromhms(12)) % TimeSchedule.timeFromhms(24), 0) / a.length + TimeSchedule.timeFromhms(12)) % TimeSchedule.timeFromhms(24);
+        },
+        stayhome: function (g, timeranges) {
+            return Average.average_time(g, GraphFunctions.attr("place", "집"), GraphFunctions.valeq("activity"), timeranges);
+        },
+        move: function (g, timeranges) {
+            return Average.average_time(g, GraphFunctions.attr("activity", "이동"), GraphFunctions.valeq("activity"), timeranges);
+        },
     }
 };
 
