@@ -1,14 +1,19 @@
 ﻿
 var GraphAnalysis = (function () {
     function extract_leaf(g) {
-        var ret = {};
+        var s = {}, ret = {};
         g.children_list.forEach((x) => x.children_list.forEach((y) => y.children_list.forEach((n) =>
-            (ret[n.attribute] ? ret[n.attribute] : ret[n.attribute] = {})[n.value] = n
+            (s[n.attribute] ? s[n.attribute] : s[n.attribute] = {})[n.value] = n
             )));
-        for (const i in ret) {
-            ret[i] = [ret[i]];
+        for (const i in s) {
+            const ri = ret[i] = {};
+            const si = s[i];
+            for (const j in si) {
+                for (const v of j.split("|")) {
+                    (ri[v] ? ri[v] : (ri[v] = [])).push(si[j]);
+                }
+            }
         }
-        //G.listValue(g, id, () => true, () => true).forEach((n) => ret[n.attribute] ? ret[n.attribute].push(n) : ret[n.attribute] = [n]);
         return ret;
     }
     function intersection(a, b) {
