@@ -14,6 +14,7 @@ var GraphAnalysis = (function () {
             }
         }
         ret._len_ = g.children_list.length;
+        ret._root_ = g;
         return ret;
     }
     function intersection(a, b) {
@@ -56,6 +57,23 @@ Subgraphs.prototype.printCorrelation = function (c, pa, pv, qa, qv) {
     return s;
 };
 
-Subgraphs.prototype.view = function (c, pa, pv, qa, qv) {
-
+Subgraphs.prototype.graph = function (c, pa, pv, qa, qv) {
+    const V = [], E = [];
+    const lc = this.l && this.l[c];
+    if (lc && lc[pa] && lc[pa][pv] && lc[qa] && lc[qa][qv]) {
+        const r = lc._root_, p = lc[pa][pv], q = lc[qa][qv];
+        V.push(r);
+        V.push(p);
+        V.push(q);
+        GraphAnalysis.intersection(p, q).forEach((x) => {
+            V.push(x);
+            E.push(new Edge(r, x));
+            E.push(new Edge(x, p));
+            E.push(new Edge(x, q));
+        });
+    }
+    else {
+        V.push(new Node("_", "ERROR"));
+    }
+    return { v: V, e: E };
 };

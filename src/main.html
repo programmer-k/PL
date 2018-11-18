@@ -34,6 +34,7 @@
         $(document).ready(() => {
             draw_network();
             draw_timeline();
+            draw_subgraph();
             $('#date').dateRangePicker();
         });
 
@@ -88,12 +89,6 @@
             network = new vis.Network(container, data, options);
             network.on("click", addNode);
             network.fit();
-        }
-
-        function draw_subgraph() {
-            if (document.getElementById("pinfo").style.display != "none") {
-
-            }
         }
 
         //fuction3: 사용자 입력에 따른 데이터 로드 함수. Load 버튼 누를 시 작동.
@@ -423,37 +418,99 @@
                 <div id="rbody"></div>
             </div>
             <div class="group last" id="pinfo" style="display: none;">
-                <div>
+                <div style="display: flex; flex-direction:column;">
                     <div>
-                        <input id="pcat" value="food" />
+                        <div>
+                            <input id="pcat" value="food" />
+                        </div>
+                        <div>
+                            <input id="p_attr" value="activity" /><input id="p_value" value="식사" />
+                            =>
+                            <input id="q_attr" value="emotion" /><input id="q_value" value="긍정" />
+                        </div>
+                        <script>
+                            (function () {
+                                let psg, network, nodes, edges;
+
+                                function printPattern() {
+
+                                    var s = "";
+
+                                    const a = ["pcat", "p_attr", "p_value", "q_attr", "q_value"].map((x) => document.getElementById(x).value);
+                                    s += psg.printCorrelation(a[0], a[1], a[2], a[3], a[4]);
+
+                                    document.getElementById("pout").innerText = s;
+
+                                    const g = psg.graph(a[0], a[1], a[2], a[3], a[4]);
+
+                                    init_graph(g);
+                                }
+
+                                function init() {
+                                    psg = new Subgraphs(manager.root);
+                                    printPattern();
+                                }
+                                //alert(this);
+                                this.initp = init;//this = window
+
+                                function init_graph(g) {
+                                    if (network) {
+                                        network.destroy();
+                                        network = null;
+                                    }
+
+                                    var tempNode = g.v.map((x) => ({ id: G.nodeid(x), label: x.value }));
+                                    var tempEdge = g.e.map((x) => ({ id: G.edgeid(x), from: G.nodeid(x.from), to: G.nodeid(x.to) }));
+
+                                    tempNode.push({ id: (manager.root.attribute + manager.root.value), label: manager.root.value });
+                                    nodes = new vis.DataSet(tempNode);
+                                    nodes.color = 'rgba(200,200,200,0.5)';
+                                    edges = new vis.DataSet(tempEdge);
+                                    draw_subgraph();
+                                }
+
+                                function draw_subgraph() {
+                                    if (document.getElementById("pinfo").style.display != "none") {
+                                        if (network) {
+                                            network.destroy();
+                                            network = null;
+                                        }
+                                        var container = document.getElementById("pgraph");
+                                        //네트워크 시각화 옵션(크기, 색상)
+                                        var options = {
+                                            nodes: {
+                                                shape: 'dot',
+                                                color: 'rgba(50, 50, 50, 1)',
+                                                size: 16
+                                            },
+                                            layout: {
+                                                randomSeed: 20,
+                                                improvedLayout: true
+                                            },
+                                            physics: true,
+                                            interaction: {
+                                                tooltipDelay: 200,
+                                                hideEdgesOnDrag: false
+                                            }
+                                        };
+
+                                        var data = { nodes: nodes, edges: edges };
+
+                                        //네트워크 구조에 데이터 추가
+                                        network = new vis.Network(container, data, options);
+                                        //network.on("click", addNode);
+                                        network.fit();
+                                    }
+                                }
+                                this.draw_subgraph = draw_subgraph;
+
+                                ["pcat", "p_attr", "p_value", "q_attr", "q_value"].forEach((x) => document.getElementById(x).addEventListener("change", printPattern));
+                            })();
+                        </script>
+                        <div id="pout"></div>
                     </div>
-                    <div>
-                        <input id="p_attr" value="activity" /><input id="p_value" value="식사" />
-                        =>
-                        <input id="q_attr" value="emotion" /><input id="q_value" value="긍정" />
-                    </div>
-                    <script>
-                        function printPattern() {
-
-                            var s = "";
-
-                            const a = ["pcat", "p_attr", "p_value", "q_attr", "q_value"];
-                            const ga = () => document.getElementById(a.shift()).value;
-                            s += psg.printCorrelation(ga(), ga(), ga(), ga(), ga());
-
-                            document.getElementById("pout").innerText = s;
-                        }
-
-                        let psg;
-                        function initp() {
-                            psg = new Subgraphs(manager.root);
-                            printPattern();
-                        }
-
-                        ["pcat", "p_attr", "p_value", "q_attr", "q_value"].forEach((x) => document.getElementById(x).addEventListener("change", printPattern));
-                    </script>
+                    <div id="pgraph" style="flex-grow: 1;"></div>
                 </div>
-                <div id="pout"></div>
             </div>
         </div>
     </div>

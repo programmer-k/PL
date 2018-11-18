@@ -131,6 +131,10 @@
         return n.attribute + "||" + n.value;
     }
 
+    function edgeid(e) {
+        return nodeid(e.from) + "|||" + nodeid(e.to);
+    }
+
     function nextEvent(g, endTime, epsilon, category) {
         var arr = []; 
         for(child of g.children_list) {
@@ -183,6 +187,7 @@
         attr: attr,
         valeq: valeq,
         nodeid: nodeid,
+        edgeid: edgeid,
         nextEvent: nextEvent,
         lastEvent: lastEvent,
     };
