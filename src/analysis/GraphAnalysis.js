@@ -13,6 +13,7 @@ var GraphAnalysis = (function () {
                 ri[j] = new Leaf(i, j, ri[j]);
             }
         }
+        ret._len_ = g.children_list.length;
         return ret;
     }
     function intersection(a, b) {
@@ -43,5 +44,18 @@ Subgraphs.prototype.getProb = function (c, pa, pv, qa, qv) {
     const lc = this.l && this.l[c];
     if (lc && lc[pa] && lc[pa][pv] && lc[qa] && lc[qa][qv])
         return GraphAnalysis.implies(lc[pa][pv], lc[qa][qv]);
+    if (lc && lc[pa] && lc[pa][pv])
+        return lc[pa][pv].parents.length / lc._len_;
     return NaN;
+};
+
+Subgraphs.prototype.printCorrelation = function (c, pa, pv, qa, qv) {
+    let s = "";
+    s += "P(q|p): " + this.getProb(c, pa, pv, qa, qv) + "\n";
+    s += "P(q): " + this.getProb(c, qa, qv) + "\n";
+    return s;
+};
+
+Subgraphs.prototype.view = function (c, pa, pv, qa, qv) {
+
 };

@@ -439,7 +439,7 @@
 
                             const a = ["pcat", "p_attr", "p_value", "q_attr", "q_value"];
                             const ga = () => document.getElementById(a.shift()).value;
-                            s += psg.getProb(ga(), ga(), ga(), ga(), ga());
+                            s += psg.printCorrelation(ga(), ga(), ga(), ga(), ga());
 
                             document.getElementById("pout").innerText = s;
                         }
