@@ -80,7 +80,7 @@
     }
     
     function getMove(g) {
-        return G.timeRanges(g, G.attr("activity", "이동"), G.valeq("activity"), TimeSchedule.timeFromhms(0, 30));
+        return G.timeRanges(g, G.attr("activity", "이동"), G.valeq("activity"), TimeSchedule.timeFromhms(0, 10));
     }
     function getYasik(g) {
         return G.timeRanges(g, G.attr("meal_type", "야식"), G.valeq("food"), TimeSchedule.timeFromhms(2));
