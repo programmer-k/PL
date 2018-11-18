@@ -99,7 +99,16 @@
         },
 
         wakeuphunger: function (g) {
-
+            var num_to_hunger = { "0": "아니오", "1": "예"};
+            var hunger_to_num = { "아니오": "0", "예": "1"};
+            var arr = [0, 0];
+            var sleeps = G.getSleep(g); var nextEven;
+            for(tr of sleeps) {
+                nextEven = G.nextEvent(g, tr.to, TimeSchedule.timeFromhms(0, 1), (n) => n.value == "food" || n.value == "activity");
+                if (nextEven != null) arr[hunger_to_num[nextEven.getChildByAttr("hunger").value]]++;
+            }
+            alert("arr[0]: " + arr[0] + "\narr[1]: " + arr[1]);
+            return (arr[0] * (-1) + arr[1] * 1) / (arr[0] + arr[1]);
         },
 
         startsleep: function (g) {
