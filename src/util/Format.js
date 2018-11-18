@@ -24,6 +24,7 @@ var Format = (function () {
     }
 
     function mstos(x) {
+        if (x == null) return "cannot be found";
         var d, h, m, s, ms, ret, sps = false;
         x = Math.round(x);
         if (x == 0)
