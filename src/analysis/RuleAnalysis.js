@@ -78,9 +78,26 @@
             }
             return maxActivity
         },
-
+        // 평균 통근하는데 걸리는 시간을 밀리세컨 단위로 반환
         commutetime: function (g) {
-
+            var cTime = [];
+            var sleeps = G.getSleep(g); var moves = G.getMove(g);
+            var cDuration;
+            for(s of sleeps) {
+                cDuration = null;
+                for(m of moves) {
+                    if (s.to <= m.from && m.from - s.to <= TimeSchedule.timeFromhms(3)) {
+                        if (cDuration == null) cDuration = m;
+                        else if (cDuration.to - cDuration.from < m.to - m.from) cDuration = m;
+                    }
+                }
+                if (cDuration != null) cTime.push(cDuration);
+            }
+            var cTimeSum = 0;
+            for(tr of cTime) {
+                cTimeSum += tr.to - tr.from;
+            }
+            return cTimeSum / cTime.length;
         }
     },
     food: {

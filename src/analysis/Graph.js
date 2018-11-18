@@ -78,6 +78,10 @@
     function getSleep(g) {
         return G.timeRanges(g, () => true, G.valeq("sleep"), TimeSchedule.timeFromhms(4), TimeSchedule.timeFromhms(2));
     }
+    
+    function getMove(g) {
+        return G.timeRanges(g, G.attr("activity", "이동"), G.valeq("activity"), TimeSchedule.timeFromhms(0, 30));
+    }
 
     function getTimeRange(g) {
         var S = G.intValues(g, function (n) { var d = new Date(n.value); return new Date(d.getFullYear(), d.getMonth(), d.getDate()).getTime(); }, () => true, () => true);
@@ -168,6 +172,7 @@
         mode: mode,
         timeRanges: timeRanges,
         getSleep: getSleep,
+        getMove: getMove,
         duration: duration,
         duration_min: duration_min,
         getTimeRange: getTimeRange,

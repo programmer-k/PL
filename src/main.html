@@ -318,7 +318,7 @@
                 s += "7. 아침에 일어났을 때 가장 많이 느끼는 감정: " + RuleAnalyzer.sleep.mood(r)  + "\n";
                 s += "8. 주말에 일어나는 평균 시각: " + Format.mstos(RuleAnalyzer.sleep.weekendwakeup(r))  + "\n";
                 s += "9. 자기 전에 가장 많이 하는 활동: " + RuleAnalyzer.sleep.actibeforebed(r)  + "\n";
-                s += "10. 일어나서 2시간 이내 발생하는 가장 긴 이동의 평균 지속 시간: " + Format.mstos(RuleAnalyzer.sleep.commutetime(r)) + "\n";
+                s += "10. 일어나서 3시간 이내 발생하는 가장 긴 이동의 평균 지속 시간: " + RuleAnalyzer.sleep.commutetime(r)/TimeSchedule.timeFromhms(0,1,0) + "분\n";
             }
             else if (document.getElementById("nighteat").checked) {
                 s += "1. 일주일간 야식먹은 평균 횟수: " + RuleAnalyzer.food.yasik(r, timeranges) * TimeSchedule.week + "\n";
