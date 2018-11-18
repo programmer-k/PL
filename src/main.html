@@ -90,6 +90,12 @@
             network.fit();
         }
 
+        function draw_subgraph() {
+            if (document.getElementById("pinfo").style.display != "none") {
+
+            }
+        }
+
         //fuction3: 사용자 입력에 따른 데이터 로드 함수. Load 버튼 누를 시 작동.
         function loadData() {
             $("#date").attr("disabled", true);
@@ -113,7 +119,8 @@
             draw_timeline();
             resetAllNodes();
 
-            //testtt();
+            //initialization for GraphAnalysis
+            initp();
         }
 
         //fuction4: 서치 결과 리턴. Go버튼 누를 시 작동.
@@ -348,17 +355,6 @@
 
         }
 
-        function printPattern() {
-
-            var r = manager.root;
-
-            var s = "";
-
-            s += "식사 -> emotion 좋음: " + GraphAnalysis.test(r);
-
-            document.getElementById("pinfo").innerText = s;
-        }
-
         function switchTab() {
             var t = document.getElementById("rinfo").style.display;
             document.getElementById("rinfo").style.display = document.getElementById("pinfo").style.display;
@@ -426,7 +422,39 @@
                 </div>
                 <div id="rbody"></div>
             </div>
-            <div class="group last" id="pinfo" onclick="printPattern();" style="display: none;"></div>
+            <div class="group last" id="pinfo" style="display: none;">
+                <div>
+                    <div>
+                        <input id="pcat" value="food" />
+                    </div>
+                    <div>
+                        <input id="p_attr" value="activity" /><input id="p_value" value="식사" />
+                        =>
+                        <input id="q_attr" value="emotion" /><input id="q_value" value="긍정" />
+                    </div>
+                    <script>
+                        function printPattern() {
+
+                            var s = "";
+
+                            const a = ["pcat", "p_attr", "p_value", "q_attr", "q_value"];
+                            const ga = () => document.getElementById(a.shift()).value;
+                            s += psg.getProb(ga(), ga(), ga(), ga(), ga());
+
+                            document.getElementById("pout").innerText = s;
+                        }
+
+                        let psg;
+                        function initp() {
+                            psg = new Subgraphs(manager.root);
+                            printPattern();
+                        }
+
+                        ["pcat", "p_attr", "p_value", "q_attr", "q_value"].forEach((x) => document.getElementById(x).addEventListener("change", printPattern));
+                    </script>
+                </div>
+                <div id="pout"></div>
+            </div>
         </div>
     </div>
 </body>

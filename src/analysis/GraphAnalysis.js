@@ -1,39 +1,12 @@
 ﻿function Leaf(attribute, value, parents) {
     this.attribute = attribute;
     this.value = value;
-    /*
-    this.nodes = nodes.map(id);
-    const m = nodes.reduce((p, x) => id(p, x.parents_list.forEach((y) => p[G.nodeid(y)] = y)), {});
-    const l = [];
-    for (const i in m) l.push(m[i]);
-    this.parents = l;
-    */
     this.parents = parents;
 }
 
 var GraphAnalysis = (function () {
     function extract_leaf(g) {
         var ret = g.children_list.reduce((p, v) => id(p, v.children_list.forEach((x) => ((q) => x.value.split("|").forEach((y) => (q[y] ? q[y] : q[y] = []).push(v)))(p[x.attribute] ? p[x.attribute] : p[x.attribute] = {}))), {});
-
-        /*
-        g.children_list.forEach((x) => x.children_list.forEach((y) => y.children_list.forEach((n) =>
-            (s[n.attribute] ? s[n.attribute] : s[n.attribute] = {})[n.value] = n
-            )));
-        for (const i in s) {
-            const ri = ret[i] = {};
-            const si = s[i];
-            for (const j in si) {
-                for (const v of j.split("|")) {
-                    (ri[v] ? ri[v] : (ri[v] = [])).push(si[j]);
-                }
-            }
-        }
-        for (const i in ret) {
-            const ri = ret[i];
-            for (const j in ri) {
-                ri[j] = new Leaf(j, ri[j]);
-            }
-        }*/
         for (const i in ret) {
             const ri = ret[i];
             for (const j in ri) {
@@ -59,3 +32,16 @@ var GraphAnalysis = (function () {
         test: test,
     };
 })();
+
+function Subgraphs(g) {
+    const l = {};
+    g.children_list.forEach((x) => l[x.value] = GraphAnalysis.extract_leaf(x));
+    this.l = Test.i(l);
+}
+
+Subgraphs.prototype.getProb = function (c, pa, pv, qa, qv) {
+    const lc = this.l && this.l[c];
+    if (lc && lc[pa] && lc[pa][pv] && lc[qa] && lc[qa][qv])
+        return GraphAnalysis.implies(lc[pa][pv], lc[qa][qv]);
+    return NaN;
+};
