@@ -6,7 +6,9 @@
 
 var GraphAnalysis = (function () {
     function extract_leaf(g) {
-        var ret = g.children_list.reduce((p, v) => id(p, v.children_list.forEach((x) => ((q) => x.value.split("|").forEach((y) => (q[y] ? q[y] : q[y] = []).push(v)))(p[x.attribute] ? p[x.attribute] : p[x.attribute] = {}))), {});
+        var ret = g.children_list.reduce((p, v) => id(p, v.children_list.forEach((x) => x.attribute != "end_time" && 
+            ((q) => x.value.split("|").forEach((y) => (q[y] ? q[y] : q[y] = []).push(v)))(p[x.attribute] ? p[x.attribute] : p[x.attribute] = {})))
+            , {});
         for (const i in ret) {
             const ri = ret[i];
             for (const j in ri) {
