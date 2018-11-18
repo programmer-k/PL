@@ -132,12 +132,25 @@
         var nextEven = null; var startTimeMs; var endTimeMs = (new Date(endTime)).getTime();
         for(node of arr) {
             startTimeMs = (new Date(node.value)).getTime();
-            if(endTimeMs<=startTimeMs)
             if (endTimeMs <= startTimeMs && startTimeMs - endTimeMs <= epsilon) {
                 nextEven = node; break;
             }
         }
         return nextEven;
+    }
+    function lastEvent(g, endTime, epsilon, category) {
+        var arr = [];
+        for(child of g.children_list) {
+            if (category(child)) arr = arr.concat(child.children_list);
+        }
+        var lastEven = null; var startTimeMs = (new Date(endTime)).getTime(); var endTimeMs;
+        for(node of arr) {
+            endTimeMs = (new Date(node.getChildByAttr("end_time").value)).getTime();
+            if (endTimeMs <= startTimeMs && startTimeMs - endTimeMs <= epsilon) {
+                lastEven = node; break;
+            }
+        }
+        return lastEven;
     }
 
     return {
@@ -162,6 +175,7 @@
         valeq: valeq,
         nodeid: nodeid,
         nextEvent: nextEvent,
+        lastEvent: lastEvent,
     };
 })();
 

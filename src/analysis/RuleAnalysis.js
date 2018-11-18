@@ -60,7 +60,23 @@
         },
 
         actibeforebed: function (g) {
-
+            var activities = {};
+            var sleeps = G.getSleep(g); var lastEven;
+            for(tr of sleeps) {
+                lastEven = G.lastEvent(g, tr.from, TimeSchedule.timeFromhms(0, 1), (n) => n.value == "food" || n.value == "activity");
+                if (lastEven != null) {
+                    var activity = lastEven.getChildByAttr("activity").value;
+                    if (!(activities.hasOwnProperty(activity)))
+                        activities[activity] = 1;
+                    else
+                        activities[activity]++;
+                }
+            }
+            var keys = Object.keys(activities); var maxActivity = keys[0];
+            for (key of keys) {
+                if (activities[maxActivity] < activities[key]) maxActivity = key;
+            }
+            return maxActivity
         },
 
         commutetime: function (g) {
