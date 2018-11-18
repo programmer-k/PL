@@ -237,7 +237,7 @@ var RuleAnalyzer = {
             // alert(emotion_sum_after_yasik);
             // alert(emotion_num);
 
-            return (emotion_sum_yasik - emotion_sum_after_yasik) / emotion_num;
+            return emotion_num==0? "야식을 먹지 않음":(emotion_sum_yasik - emotion_sum_after_yasik) / emotion_num;
         },
 
         timetosleep: function (g) {
