@@ -45,7 +45,18 @@
         },
 
         mood: function (g) {
-
+            var num_to_emotion = { "0": "매우 부정", "1": "부정", "2": "보통", "3": "긍정", "4" : "매우 긍정" };
+            var emotion_to_num = { "매우 부정" : "0", "부정" : "1", "보통" :  "2", "긍정" : "3" , "매우 긍정" : "4"};
+            var arr = [0, 0, 0, 0, 0]; var maxIndex = 0;
+            var sleeps = G.getSleep(g); var nextEven; //alert(sleeps.length);
+            for(tr of sleeps) {
+                nextEven = G.nextEvent(g, tr.to, TimeSchedule.timeFromhms(0, 1), (n) => n.value == "food" || n.value == "activity");
+                if(nextEven != null) arr[emotion_to_num[nextEven.getChildByAttr("emotion").value]]++;
+            }
+            for (var i = 0; i < 5; i++) {
+                if (arr[maxIndex] < arr[i]) maxIndex = i; //alert(arr[i]);
+            }
+            return num_to_emotion[maxIndex];
         },
 
         actibeforebed: function (g) {

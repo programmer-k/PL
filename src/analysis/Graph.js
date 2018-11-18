@@ -124,6 +124,22 @@
         return n.attribute + "||" + n.value;
     }
 
+    function nextEvent(g, endTime, epsilon, category) {
+        var arr = []; 
+        for(child of g.children_list) {
+            if (category(child)) arr = arr.concat(child.children_list);
+        }
+        var nextEven = null; var startTimeMs; var endTimeMs = (new Date(endTime)).getTime();
+        for(node of arr) {
+            startTimeMs = (new Date(node.value)).getTime();
+            if(endTimeMs<=startTimeMs)
+            if (endTimeMs <= startTimeMs && startTimeMs - endTimeMs <= epsilon) {
+                nextEven = node; break;
+            }
+        }
+        return nextEven;
+    }
+
     return {
         average_per_occurrence: average_per_occurrence,
         average_per_time: average_per_time,
@@ -145,6 +161,7 @@
         attr: attr,
         valeq: valeq,
         nodeid: nodeid,
+        nextEvent: nextEvent,
     };
 })();
 
