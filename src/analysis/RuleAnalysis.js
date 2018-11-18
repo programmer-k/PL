@@ -1,4 +1,4 @@
-﻿var RuleAnalyzer = {
+var RuleAnalyzer = {
     sleep: {
         /*
         sleeptime: function (g, timeranges) {
@@ -89,8 +89,10 @@
             }
             return maxActivity*/
         },
+
         // 평균 통근하는데 걸리는 시간을 밀리세컨 단위로 반환
         commutetime: function (g) {
+
             var cTime = [];
             var sleeps = G.getSleep(g); var moves = G.getMove(g);
             var cDuration;
@@ -201,11 +203,12 @@
         },
 
         avgexerhobout: function (g, timeranges) {
-
+            return G.average_per_time(g, () => 1, (n) => { return G.attr("activity", "야외활동")(n) || G.attr("activity", "능동적 여가")(n); }, G.valeq("activity"), timeranges);
+            return G.average_per_time(g, () => 1, G.attr("meal_type", "아침"), G.valeq("food"), timeranges);
         },
 
         avgmood: function (g) {
-
+            
         },
 
         diffmood: function (g) {
