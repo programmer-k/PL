@@ -12,6 +12,9 @@ TimeSchedule.timeFromhms = function (h, m, s, ms) {
 TimeSchedule.fromDate = function (from, to) {
     return new TimeSchedule(TimeSchedule.timeInDay(from), TimeSchedule.timeInDay(to));
 };
+TimeSchedule.fromNode = function (n) {
+    return TimeSchedule.fromDate(new Date(n.value), new Date(n.getChildByAttr("end_time").value));
+}
 
 TimeSchedule.prototype.contains = function (d) {
     var t = TimeSchedule.timeInDay(d);
