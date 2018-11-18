@@ -337,7 +337,7 @@
                 s += "2. 평균 귀가 시각: " + Format.mstos(RuleAnalyzer.life.gohome(r)) + "\n";
                 s += "3. 하루중 집에 있는 평균 시간: " + Format.mstos(RuleAnalyzer.life.stayhome(r, timeranges) * TimeSchedule.day) + "\n";
                 s += "4. 하루중 다른 사람과 함께 있는 평균 시간: " + Format.mstos(RuleAnalyzer.life.together(r, timeranges) * TimeSchedule.day) + "\n";
-                s += "5. 일주일간 운동, 능동적 여가, 야외활동 평균 횟수: " + RuleAnalyzer.life.avgexerhobout(r, timeranges) + "\n";
+                s += "5. 일주일간 능동적 여가, 야외활동 평균 횟수: " + RuleAnalyzer.life.avgexerhobout(r, timeranges) * TimeSchedule.week + "\n";
                 s += "6. 다른 사람과 함께 있을 때 감정의 평균값: " + RuleAnalyzer.life.avgmood(r)  + "\n";
                 s += "7. 친밀한 사람과 함께 있을 때와 데면한 사람과 있을 때 평균적인 감정 차이: " + RuleAnalyzer.life.diffmood(r)  + "\n";
                 s += "8. 하루중 이동에 들이는 평균 시간: " + Format.mstos(RuleAnalyzer.life.move(r, timeranges) * TimeSchedule.day)  + "\n";
