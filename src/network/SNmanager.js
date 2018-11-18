@@ -123,7 +123,7 @@ SNmanager.prototype.searchNode = function(gss, time, attribute){
 //네트워크 노드의 ID를 재귀적으로 탐색
 SNmanager.prototype.getNodeById = function (id) {
     const search = (node) => {
-        if (node.attribute + node.value === id) {
+        if (G.nodeid(node) === id) {
             return node
         }
 

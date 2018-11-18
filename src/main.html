@@ -148,7 +148,7 @@
             var tempNode = [];
             var tempEdge = [];
 
-            tempNode.push({ id: (manager.root.attribute + manager.root.value), label: manager.root.value });
+            tempNode.push({ id: Test.i(G.nodeid(manager.root)), label: manager.root.value });
             nodes = new vis.DataSet(tempNode);
             nodes.color = 'rgba(200,200,200,0.5)';
             edges = new vis.DataSet(tempEdge);
@@ -164,7 +164,7 @@
             }
             // 클릭된 노드의 정보 불러오기
             const self_id = params['nodes'][0];
-            const self = manager.getNodeById(remove_index(self_id));
+            const self = Test.i(manager.getNodeById(Test.i(remove_index(self_id))));
             // 클릭된 노드가 자식 노드를 가지고 있지 않은 경우 중단
             if (self.children_list.length === 0) {
                 return;
@@ -185,7 +185,7 @@
                             index++;
                         }
                     }
-                    child_a.id = `${child_a.attribute}${child_a.value}|${index}`
+                    child_a.id = `${child_a.attribute}||${child_a.value}||#${index}`
                 }
             });
             // 표시할 노드/엣지 정보를 읽어오고
@@ -214,12 +214,12 @@
 
         //fuction7: NetworkManager와 Vis.Dataset의 서로 다른 ID를 정규화하는 함수
         function remove_index(id) {
-            return id.split("|", 2)[0];
+            return id.split("||#", 2)[0];
         }
 
         //fuction8: Vis.Dataset의 edge ID를 반환
         function get_edge_id(from, to) {
-            return `${from.id}|${to.id}`;
+            return `${from.id}|||${to.id}`;
         }
 
         //fuction9: 반복 클릭에 의해 제거되지 않던 child node 재귀적으로 제거
