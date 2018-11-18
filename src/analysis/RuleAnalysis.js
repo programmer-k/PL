@@ -229,7 +229,7 @@ var RuleAnalyzer = {
         },
 
         avgmood: function (g) {
-            var emotion_to_num = { "매우 부정": 0, "부정": 1, "보통": 2, "긍정": 3, "매우 긍정": 4 };
+            var emotion_to_num = { "매우 부정": -2, "부정": -1, "보통": 0, "긍정": 1, "매우 긍정": 2 };
             var emotion_sum = G.sum(g, (n) => emotion_to_num[n.getChildByAttr("emotion").value], (n) => G.attr("person", "친밀한 관계")(n) || G.attr("person", "데면한 관계")(n), () => true);
             var emotion_num = G.sum(g, () => true, (n) => G.attr("person", "친밀한 관계")(n) || G.attr("person", "데면한 관계")(n), () => true);
 
@@ -237,7 +237,12 @@ var RuleAnalyzer = {
         },
 
         diffmood: function (g) {
+            var emotion_to_num = { "매우 부정": -2, "부정": -1, "보통": 0, "긍정": 1, "매우 긍정": 2 };
+            var emotion_sum_friendly = G.sum(g, (n) => emotion_to_num[n.getChildByAttr("emotion").value], (n) => G.attr("person", "친밀한 관계")(n), () => true);
+            var emotion_sum_not_f = G.sum(g, (n) => emotion_to_num[n.getChildByAttr("emotion").value], (n) => G.attr("person", "데면한 관계")(n), () => true);
+            var emotion_num = G.sum(g, () => true, (n) => G.attr("person", "친밀한 관계")(n) || G.attr("person", "데면한 관계")(n), () => true);
 
+            return (emotion_sum_friendly - emotion_sum_not_f) / emotion_num;
         },
 
         diffmealquanti: function (g) {
