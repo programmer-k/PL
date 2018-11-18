@@ -82,6 +82,9 @@
     function getMove(g) {
         return G.timeRanges(g, G.attr("activity", "이동"), G.valeq("activity"), TimeSchedule.timeFromhms(0, 30));
     }
+    function getYasik(g) {
+        return G.timeRanges(g, G.attr("meal_type", "야식"), G.valeq("food"), TimeSchedule.timeFromhms(2));
+    }
 
     function getTimeRange(g) {
         var S = G.intValues(g, function (n) { var d = new Date(n.value); return new Date(d.getFullYear(), d.getMonth(), d.getDate()).getTime(); }, () => true, () => true);
@@ -173,6 +176,7 @@
         timeRanges: timeRanges,
         getSleep: getSleep,
         getMove: getMove,
+        getYasik: getYasik,
         duration: duration,
         duration_min: duration_min,
         getTimeRange: getTimeRange,

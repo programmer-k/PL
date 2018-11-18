@@ -58,25 +58,36 @@
             }
             return num_to_emotion[maxIndex];
         },
-
+        //자기 전에 가장 많이 한 상위 10개 이하의 활동을 배열로 반환
         actibeforebed: function (g) {
             var activities = {};
             var sleeps = G.getSleep(g); var lastEven;
             for(tr of sleeps) {
                 lastEven = G.lastEvent(g, tr.from, TimeSchedule.timeFromhms(0, 1), (n) => n.value == "food" || n.value == "activity");
                 if (lastEven != null) {
-                    var activity = lastEven.getChildByAttr("activity").value;
-                    if (!(activities.hasOwnProperty(activity)))
-                        activities[activity] = 1;
-                    else
-                        activities[activity]++;
+                    var split_activity = lastEven.getChildByAttr("activity").value.split("|");
+                    for(value of split_activity) 
+                        if (!(activities.hasOwnProperty(value)))
+                            activities[value] = 1;
+                        else
+                            activities[value]++;
                 }
             }
-            var keys = Object.keys(activities); var maxActivity = keys[0];
+            var arr=[];
+            for(key in activities) {
+                var subarr = [];
+                subarr.push(key); subarr.push(activities[key]);
+                arr.push(subarr);
+            }
+            arr.sort(function (a, b) { return a[1] > b[1] ? -1 : a[1] < b[1] ? 1 : 0; }); alert(arr.toString());
+            var topActivities=[];
+            for (var i = 0; i < 10 && i < arr.length; i++) topActivities.push(arr[i][0]);
+            return topActivities;
+            /*var keys = Object.keys(activities); var maxActivity = keys[0];
             for (key of keys) {
                 if (activities[maxActivity] < activities[key]) maxActivity = key;
             }
-            return maxActivity
+            return maxActivity*/
         },
         // 평균 통근하는데 걸리는 시간을 밀리세컨 단위로 반환
         commutetime: function (g) {
@@ -112,11 +123,15 @@
             }
             //var sc = new TimeSchedule(TimeSchedule.timeFromhms(21), TimeSchedule.timeFromhms(3));
             //return G.timeRanges(g, (n) => sc.contains(new Date(n.value)), G.valeq("food"), 60000).map((n) => day(n.from)).reduce((p, v, i, a) => i == 0 ? 1 : v == a[i - 1] ? p : p + 1, 0) / Test.i(TimeRange.sumlength(timeranges));
-            return G.timeRanges(g, G.attr("meal_type", "야식"), G.valeq("food"), TimeSchedule.timeFromhms(2)).map((n) => day(n.from)).length / Test.i(TimeRange.sumlength(timeranges));
+            return G.getYasik(g).map((n) => day(n.from)).length / Test.i(TimeRange.sumlength(timeranges));
         },
-
+        //밀리세컨당 야식을 많이 먹은 횟수를 반환
         avgmanyfood: function (g, timeranges) {
-
+            /*var yasik = G.getYasik(g);
+            var yasikManyCount = 0; 
+            for(tr of yasik) {
+                var yasiksInTr = G.listValue(g, (n)=> n, (n)=>{return G.attr("meal_type","야식")(n) && })
+            }*/
         },
 
         favofood: function (g) {
@@ -140,7 +155,6 @@
                 nextEven = G.nextEvent(g, tr.to, TimeSchedule.timeFromhms(0, 1), (n) => n.value == "food" || n.value == "activity");
                 if (nextEven != null) arr[hunger_to_num[nextEven.getChildByAttr("hunger").value]]++;
             }
-            alert("arr[0]: " + arr[0] + "\narr[1]: " + arr[1]);
             return (arr[0] * (-1) + arr[1] * 1) / (arr[0] + arr[1]);
         },
 
