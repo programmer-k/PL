@@ -80,4 +80,6 @@ body {
     background: none;
     flex-grow: 1;
     margin-bottom: 0;
+    display: flex;
+    flex-flow: column;
 }
