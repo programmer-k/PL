@@ -79,7 +79,7 @@ var RuleAnalyzer = {
                 subarr.push(key); subarr.push(activities[key]);
                 arr.push(subarr);
             }
-            arr.sort(function (a, b) { return a[1] > b[1] ? -1 : a[1] < b[1] ? 1 : 0; }); alert(arr.toString());
+            arr.sort(function (a, b) { return a[1] > b[1] ? -1 : a[1] < b[1] ? 1 : 0; });
             var topActivities=[];
             for (var i = 0; i < 10 && i < arr.length; i++) topActivities.push(arr[i][0]);
             return topActivities;
@@ -131,13 +131,33 @@ var RuleAnalyzer = {
         avgmanyfood: function (g, timeranges) {
             /*var yasik = G.getYasik(g);
             var yasikManyCount = 0; 
-            for(tr of yasik) {
+            for(tr of yasik) { 
                 var yasiksInTr = G.listValue(g, (n)=> n, (n)=>{return G.attr("meal_type","야식")(n) && })
             }*/
         },
-
+        // 야식으로 먹은 음식중 가장 많이 먹은 음식 상위 3개 이하의 배열 반환
         favofood: function (g) {
-
+            var yasikType = {};
+            var yasiks = G.listValue(g, (n)=>n, G.attr("meal_type","야식"), G.valeq("food"));
+            for(node of yasiks) {
+                var split_Food = node.getChildByAttr("food").value.split("|");
+                for(val of split_Food) {
+                    if(!yasikType.hasOwnProperty(val)) yasikType[val]=1;
+                    else yasikType[val]++;
+                }
+            }
+            alert(yasikType.toString());
+            var arr=[];
+            for (food in yasikType) {
+                alert(food);
+                var subarr=[];
+                subarr.push(food); subarr.push(yasikType[food]);
+                arr.push(subarr);
+            }
+            arr.sort(function (a, b) { return a[1] > b[1] ? -1 : a[1] < b[1] ? 1 : 0; });
+            var topFood=[];
+            for(var i=0; i<3 && i<arr.length; i++) topFood.push(arr[i][0]);
+            return topFood.length == 0 ? "없음" : topFood;
         },
 
         diffdinneryasik: function (g, timeranges) {
