@@ -127,13 +127,23 @@ var RuleAnalyzer = {
             //return G.timeRanges(g, (n) => sc.contains(new Date(n.value)), G.valeq("food"), 60000).map((n) => day(n.from)).reduce((p, v, i, a) => i == 0 ? 1 : v == a[i - 1] ? p : p + 1, 0) / Test.i(TimeRange.sumlength(timeranges));
             return G.getYasik(g).map((n) => day(n.from)).length / Test.i(TimeRange.sumlength(timeranges));
         },
-        //밀리세컨당 야식을 많이 먹은 횟수를 반환
-        avgmanyfood: function (g, timeranges) {
-            /*var yasik = G.getYasik(g);
-            var yasikManyCount = 0; 
-            for(tr of yasik) { 
-                var yasiksInTr = G.listValue(g, (n)=> n, (n)=>{return G.attr("meal_type","야식")(n) && })
-            }*/
+        //야식 중 식사량이 '많음' 이상인 비율 반환
+        avgmanyfood: function (g) {
+            var yasikTr = G.getYasik(g);
+            var yasiks = G.listValue(g, (n)=>n, G.attr("meal_type","야식"), G.valeq("food"));
+            var yasikManyCount = 0;
+            for(tr of yasikTr) {
+                var arr = []; var start= (new Date(tr.from)).getTime(); var end = (new Date(tr.to)).getTime();
+                for(yasik of yasiks) {
+                    var time = (new Date(yasik.value)).getTime();
+                    if (time >= start && time <= end) arr.push(yasik);
+                }
+                for(e of arr) {
+                    if (e.getChildByAttr("amount_of_food").value == "많음" || e.getChildByAttr("amount_of_food").value == "매우 많음")
+                        yasikManyCount++; break;
+                }
+            }
+            return yasikTr.length==0? "야식을 먹지 않음": yasikManyCount / yasikTr.length;
         },
         // 야식으로 먹은 음식중 가장 많이 먹은 음식 상위 3개 이하의 배열 반환
         favofood: function (g) {
@@ -146,10 +156,8 @@ var RuleAnalyzer = {
                     else yasikType[val]++;
                 }
             }
-            alert(yasikType.toString());
             var arr=[];
             for (food in yasikType) {
-                alert(food);
                 var subarr=[];
                 subarr.push(food); subarr.push(yasikType[food]);
                 arr.push(subarr);
@@ -157,7 +165,7 @@ var RuleAnalyzer = {
             arr.sort(function (a, b) { return a[1] > b[1] ? -1 : a[1] < b[1] ? 1 : 0; });
             var topFood=[];
             for(var i=0; i<3 && i<arr.length; i++) topFood.push(arr[i][0]);
-            return topFood.length == 0 ? "없음" : topFood;
+            return topFood.length == 0 ? "야식을 먹지 않음" : topFood;
         },
 
         diffdinneryasik: function (g, timeranges) {
