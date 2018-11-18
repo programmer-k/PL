@@ -79,7 +79,7 @@ var RuleAnalyzer = {
                 subarr.push(key); subarr.push(activities[key]);
                 arr.push(subarr);
             }
-            arr.sort(function (a, b) { return a[1] > b[1] ? -1 : a[1] < b[1] ? 1 : 0; });
+            arr.sort(function (a, b) { return a[1] > b[1] ? -1 : a[1] < b[1] ? 1 : 0; }); alert(arr.toString());
             var topActivities=[];
             for (var i = 0; i < 10 && i < arr.length; i++) topActivities.push(arr[i][0]);
             return topActivities;
@@ -131,10 +131,11 @@ var RuleAnalyzer = {
         avgmanyfood: function (g, timeranges) {
             /*var yasik = G.getYasik(g);
             var yasikManyCount = 0; 
-            for(tr of yasik) { 
+            for(tr of yasik) {
                 var yasiksInTr = G.listValue(g, (n)=> n, (n)=>{return G.attr("meal_type","야식")(n) && })
             }*/
         },
+
         // 야식으로 먹은 음식중 가장 많이 먹은 음식 상위 3개 이하의 배열 반환
         favofood: function (g) {
             var yasikType = {};
@@ -228,7 +229,11 @@ var RuleAnalyzer = {
         },
 
         avgmood: function (g) {
-            
+            var emotion_to_num = { "매우 부정": 0, "부정": 1, "보통": 2, "긍정": 3, "매우 긍정": 4 };
+            var emotion_sum = G.sum(g, (n) => emotion_to_num[n.getChildByAttr("emotion").value], (n) => G.attr("person", "친밀한 관계")(n) || G.attr("person", "데면한 관계")(n), () => true);
+            var emotion_num = G.sum(g, () => true, (n) => G.attr("person", "친밀한 관계")(n) || G.attr("person", "데면한 관계")(n), () => true);
+
+            return emotion_sum / emotion_num;
         },
 
         diffmood: function (g) {
