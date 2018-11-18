@@ -193,7 +193,16 @@ var RuleAnalyzer = {
         },
 
         diffmood: function (g) {
+            var emotion_to_num = { "매우 부정": -2, "부정": -1, "보통": 0, "긍정": 1, "매우 긍정": 2 };
+            var emotion_sum_yasik = G.sum(g, (n) => emotion_to_num[n.getChildByAttr("emotion").value], (n) => G.attr("meal_type", "야식")(n), G.valeq("food"));
+            var emotion_sum_after_yasik = G.sum(g, (n) => emotion_to_num[G.nextEvent(g, n.getChildByAttr("end_time").value, TimeSchedule.timeFromhms(0, 1), () => true).getChildByAttr("emotion").value], (n) => G.attr("meal_type", "야식")(n), G.valeq("food"));
+            var emotion_num = G.sum(g, () => 1, (n) => G.attr("meal_type", "야식")(n) || G.attr("meal_type", "야식")(n), G.valeq("food"));
 
+            alert(emotion_sum_yasik);
+            alert(emotion_sum_after_yasik);
+            alert(emotion_num);
+
+            return (emotion_sum_yasik - emotion_sum_after_yasik) / emotion_num;
         },
 
         timetosleep: function (g) {
