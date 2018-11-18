@@ -79,7 +79,7 @@ var RuleAnalyzer = {
                 subarr.push(key); subarr.push(activities[key]);
                 arr.push(subarr);
             }
-            arr.sort(function (a, b) { return a[1] > b[1] ? -1 : a[1] < b[1] ? 1 : 0; }); alert(arr.toString());
+            arr.sort(function (a, b) { return a[1] > b[1] ? -1 : a[1] < b[1] ? 1 : 0; });
             var topActivities=[];
             for (var i = 0; i < 10 && i < arr.length; i++) topActivities.push(arr[i][0]);
             return topActivities;
@@ -127,13 +127,23 @@ var RuleAnalyzer = {
             //return G.timeRanges(g, (n) => sc.contains(new Date(n.value)), G.valeq("food"), 60000).map((n) => day(n.from)).reduce((p, v, i, a) => i == 0 ? 1 : v == a[i - 1] ? p : p + 1, 0) / Test.i(TimeRange.sumlength(timeranges));
             return G.getYasik(g).map((n) => day(n.from)).length / Test.i(TimeRange.sumlength(timeranges));
         },
-        //밀리세컨당 야식을 많이 먹은 횟수를 반환
-        avgmanyfood: function (g, timeranges) {
-            /*var yasik = G.getYasik(g);
-            var yasikManyCount = 0; 
-            for(tr of yasik) {
-                var yasiksInTr = G.listValue(g, (n)=> n, (n)=>{return G.attr("meal_type","야식")(n) && })
-            }*/
+        //야식 중 식사량이 '많음' 이상인 비율 반환
+        avgmanyfood: function (g) {
+            var yasikTr = G.getYasik(g);
+            var yasiks = G.listValue(g, (n)=>n, G.attr("meal_type","야식"), G.valeq("food"));
+            var yasikManyCount = 0;
+            for(tr of yasikTr) {
+                var arr = []; var start= (new Date(tr.from)).getTime(); var end = (new Date(tr.to)).getTime();
+                for(yasik of yasiks) {
+                    var time = (new Date(yasik.value)).getTime();
+                    if (time >= start && time <= end) arr.push(yasik);
+                }
+                for(e of arr) {
+                    if (e.getChildByAttr("amount_of_food").value == "많음" || e.getChildByAttr("amount_of_food").value == "매우 많음")
+                        yasikManyCount++; break;
+                }
+            }
+            return yasikTr.length==0? "야식을 먹지 않음": yasikManyCount / yasikTr.length;
         },
 
         // 야식으로 먹은 음식중 가장 많이 먹은 음식 상위 3개 이하의 배열 반환
@@ -147,10 +157,8 @@ var RuleAnalyzer = {
                     else yasikType[val]++;
                 }
             }
-            alert(yasikType.toString());
             var arr=[];
             for (food in yasikType) {
-                alert(food);
                 var subarr=[];
                 subarr.push(food); subarr.push(yasikType[food]);
                 arr.push(subarr);
@@ -158,15 +166,37 @@ var RuleAnalyzer = {
             arr.sort(function (a, b) { return a[1] > b[1] ? -1 : a[1] < b[1] ? 1 : 0; });
             var topFood=[];
             for(var i=0; i<3 && i<arr.length; i++) topFood.push(arr[i][0]);
-            return topFood.length == 0 ? "없음" : topFood;
+            return topFood.length == 0 ? "야식을 먹지 않음" : topFood;
         },
-
+        // 저녁과 저녁으로부터 12시간 내에 먹은 야식 간의 평균 시간 차이를 밀리세컨 단위로 반환
         diffdinneryasik: function (g, timeranges) {
-
+            var dinners = G.listValue(g, (n) =>n, G.attr("meal_type", "저녁"), G.valeq("food"));
+            var yasikTr = G.getYasik(g);
+            var twelveHours = TimeSchedule.timeFromhms(12);
+            var earliestYasik; var diffs=[];
+            for(dinner of dinners) {
+                var dinnerEndTime = (new Date(dinner.getChildByAttr("end_time").value)).getTime();
+                earliestYasik=null;
+                for(tr of yasikTr) {
+                    var yasikStartTime = (new Date(tr.from)).getTime();
+                    if (dinnerEndTime <= yasikStartTime && yasikStartTime - dinnerEndTime <= twelveHours) {
+                        if (earliestYasik == null || earliestYasik>yasikStartTime) earliestYasik = yasikStartTime;
+                    }
+                }
+                if (earliestYasik != null) diffs.push(earliestYasik - dinnerEndTime);
+            }
+            return (dinners.length==0 || yasikTr.length==0)? null : diffs.reduce((p, v) =>p + v, 0) / diffs.length;
         },
 
         mostdinnerquanti: function (g) {
-
+            var num_to_amount = { "0": "매우 적음", "1": "적음", "2": "많음", "3": "매우 많음" };
+            var amount_to_num = { "매우 적음": "0", "적음": "1", "많음": "2", "매우 많음": "3" };
+            var dinnersAmount = G.listValue(g, (n) => { return n.getChildByAttr("amount_of_food").value }, G.attr("meal_type", "저녁"), G.valeq("food"));
+            var arr = [0, 0, 0, 0];
+            for(amount of dinnersAmount) arr[amount_to_num[amount]]++;
+            var maxIndex = 0;
+            for (var i = 0; i < 4; i++) if (arr[maxIndex] < arr[i]) maxIndex = i;
+            return dinnersAmount.length == 0 ? "저녁을 먹지 않음" : num_to_amount[maxIndex];
         },
 
         wakeuphunger: function (g) {
@@ -187,9 +217,14 @@ var RuleAnalyzer = {
             a.shift();
             return (a.reduce((p, v) => p + (TimeSchedule.timeInDay(v.from) + TimeSchedule.timeFromhms(12)) % TimeSchedule.timeFromhms(24), 0) / a.length + TimeSchedule.timeFromhms(12)) % TimeSchedule.timeFromhms(24);
         },
-
+        // 야식을 제외한 식사의 평균 식사량을 -2~2의 범위의 숫자로 반환
         avgquanti: function (g) {
-
+            var num_to_amount = { "0": "매우 적음", "1": "적음", "2": "많음", "3": "매우 많음" };
+            var amount_to_num = { "매우 적음": "0", "적음": "1", "많음": "2", "매우 많음": "3" };
+            var mealsAmount = G.listValue(g, (n) => n.getChildByAttr("amount_of_food").value, (n) => !(G.attr("meal_type", "야식")(n)) && n.getChildByAttr("amount_of_food")!=null, G.valeq("food"));
+            var arr = [0, 0, 0, 0];
+            for(amount of mealsAmount) arr[amount_to_num[amount]]++;
+            return mealsAmount.length == 0 ? null : (arr[0] * (-2) + arr[1] * (-1) + arr[2] * 1 + arr[3] * 2) / mealsAmount.length;
         },
 
         diffmood: function (g) {
@@ -206,7 +241,22 @@ var RuleAnalyzer = {
         },
 
         timetosleep: function (g) {
-
+            var yasikTr = G.getYasik(g);
+            var sleepTr = G.getSleep(g);
+            var twelveHours = TimeSchedule.timeFromhms(12);
+            var earliestSleep; var diffs = [];
+            for(ytr of yasikTr) {
+                var yasikEndTime = (new Date(ytr.to)).getTime();
+                earliestSleep = null;
+                for(str of sleepTr) {
+                    var sleepStartTime = (new Date(str.from)).getTime();
+                    if (yasikEndTime <= sleepStartTime && sleepStartTime - yasikEndTime <= twelveHours) {
+                        if (earliestSleep == null || earliestSleep > sleepStartTime) earliestSleep = sleepStartTime;
+                    }
+                }
+                if (earliestSleep != null) diffs.push(earliestSleep - yasikEndTime);
+            }
+            return (yasikTr.length == 0 || sleepTr.length == 0) ? null : diffs.reduce((p, v) =>p + v, 0) / diffs.length;
         }
     },
     life: {
@@ -255,7 +305,19 @@ var RuleAnalyzer = {
         },
 
         diffmealquanti: function (g) {
-
+            var num_to_amount = { "0": "매우 적음", "1": "적음", "2": "많음", "3": "매우 많음" };
+            var amount_to_num = { "매우 적음": "0", "적음": "1", "많음": "2", "매우 많음": "3" };
+            var aloneAmount = G.listValue(g, (n) =>n.getChildByAttr("amount_of_food").value,
+                (n) => n.getChildByAttr("person") != null && n.getChildByAttr("person").value == "혼자" && n.getChildByAttr("amount_of_food") != null, G.valeq("food"));
+            var withAmount = G.listValue(g, (n) =>n.getChildByAttr("amount_of_food").value,
+                (n) => n.getChildByAttr("person") != null && n.getChildByAttr("person").value != "혼자" && n.getChildByAttr("amount_of_food") != null, G.valeq("food"));
+            var aloneArr = [0,0,0,0];
+            for(amount of aloneAmount) aloneArr[amount_to_num[amount]]++;
+            var withArr = [0, 0, 0, 0];
+            for(amount of withAmount) withArr[amount_to_num[amount]]++;
+            return (aloneAmount.length == 0 || withAmount.length == 0) ? "늘 혼자 먹거나 늘 다른 사람과 같이 먹음" :
+                (aloneArr[0] * (-2) + aloneArr[1] * (-1) + aloneArr[2] * 1 + aloneArr[3] * 2) / aloneAmount.length -
+                (withArr[0] * (-2) + withArr[1] * (-1) + withArr[2] * 1 + withArr[3] * 2) / withAmount.length;
         }
     }
 };
